@@ -6,7 +6,7 @@
 
   // Change these to rename the game everywhere.
   F.TITLE = 'LEGENDARY FRIENDS';
-  F.SUB = 'TRIVIA NIGHT';
+  F.SUB = 'QUEST FOR TRIVIA';
   // Shown small on the start screens. Goes up with every change; CHANGELOG.md says what each one was.
   F.VERSION = '1.0';
 

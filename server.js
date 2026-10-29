@@ -1,6 +1,6 @@
 'use strict';
 /*
- * Legendary Friends: Trivia Night — the server.
+ * Legendary Friends: Quest for Trivia — the server.
  * One process holds every room in memory. The TV page creates a room, phones join it with a
  * 4-letter code, and the server is the single source of truth: every change is pushed to every
  * screen as a fresh snapshot. Secrets stay here: nobody's phone is sent a right answer until the

@@ -1,6 +1,7 @@
 # Changelog
 
 ## 1.0 — Oct 29, 2026
+Named "Legendary Friends: Quest for Trivia".
 First version, built for the Halloween party.
 
 - Four worlds (Hollow Hill, Dry Gulch, The Shattered Spire, Station Omega) with eight monsters and a boss each, plus the Quizmaster as the final boss. The TV picks the road, fights per world, strength, clock and question packs.

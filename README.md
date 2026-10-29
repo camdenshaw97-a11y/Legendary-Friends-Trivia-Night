@@ -1,4 +1,4 @@
-# Legendary Friends: Trivia Night
+# Legendary Friends: Quest for Trivia
 
 A co-op trivia RPG for a TV and your phones, in the spirit of Jackbox's *Legends of Trivia*. Pick a hero, pick a path, and answer trivia together to take down the monsters of four worlds: Hollow Hill (Halloween), Dry Gulch (Wild West), The Shattered Spire (dragons & wizards) and Station Omega (deep space), then the Quizmaster in the Hall of Legends.
 

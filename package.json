@@ -1,7 +1,7 @@
 {
   "name": "legendary-friends",
   "version": "1.0.0",
-  "description": "Legendary Friends: Trivia Night — a co-op trivia RPG for a TV and your phones. Pick a hero, pick a path, and answer trivia together to take down the monsters of four worlds.",
+  "description": "Legendary Friends: Quest for Trivia — a co-op trivia RPG for a TV and your phones. Pick a hero, pick a path, and answer trivia together to take down the monsters of four worlds.",
   "main": "server.js",
   "private": true,
   "scripts": {
