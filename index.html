@@ -1,0 +1,804 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="theme-color" content="#140a1e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Legendary Friends</title>
+<link rel="stylesheet" href="/style.css">
+<style>
+html, body { margin: 0; min-height: 100%; }
+body { font-family: var(--text); color: var(--ink); background: radial-gradient(ellipse at 50% 0%, var(--bg2), var(--bg1) 60%, var(--bg3)) fixed; -webkit-tap-highlight-color: transparent; transition: background .6s; }
+.view { display: none; min-height: var(--vh, 100vh); box-sizing: border-box; }
+.view.on { display: block; }
+.wrap { max-width: 440px; margin: 0 auto; padding: 14px 12px calc(28px + env(safe-area-inset-bottom)); box-sizing: border-box; }
+
+/* ---- join */
+#join .wrap { padding-top: 40px; text-align: center; }
+#join .logo { justify-content: center; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+#join .logo .mk { width: 100px; height: 100px; }
+#join .logo b { font-size: 36px; }
+#join .logo small { font-size: 15px; letter-spacing: .4em; }
+.j-card { padding: 20px 18px; text-align: left; }
+.j-card label { display: flex; justify-content: space-between; font: 400 13px/1 var(--display); letter-spacing: .3em; color: var(--accent); margin: 6px 0 8px; }
+.j-card label .left { color: var(--ink3); letter-spacing: .05em; font-family: var(--text); font-weight: 600; }
+.j-card input { width: 100%; box-sizing: border-box; font: 600 24px/1.2 var(--text); padding: 14px; border-radius: 12px; border: 0; background: #0006; color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); margin-bottom: 14px; outline: none; }
+.j-card input:focus { box-shadow: inset 0 0 0 2px var(--gold); }
+#code { font: 400 44px/1 var(--display); letter-spacing: .3em; text-align: center; text-transform: uppercase; }
+.j-play { width: 100%; font-size: 24px; padding: 18px; }
+.j-play.ready { animation: pulse 1.4s infinite; }
+@keyframes pulse { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.2); } }
+#joinErr { color: var(--bad); font-weight: 600; min-height: 20px; margin: 12px 0 0; text-align: center; }
+#joinWait { color: var(--ink3); font-size: 14px; margin: 8px 0 0; text-align: center; }
+.ver { font-size: 12px; letter-spacing: .3em; color: var(--dim); margin-top: 26px; }
+#deskTv { display: none; margin-top: 16px; font-size: 14px; color: var(--ink3); }
+#deskTv a { color: var(--gold); }
+@media (min-width: 900px) and (hover: hover) { #deskTv { display: block; } }
+
+/* ---- bars & cards */
+.bar2 { display: flex; align-items: center; justify-content: space-between; font: 700 13px/1 var(--text); letter-spacing: .15em; color: var(--ink3); margin: 2px 2px 12px; }
+.bar2 b { color: var(--gold); }
+.card { padding: 18px 16px; margin-bottom: 12px; }
+.card h3 { display: flex; justify-content: space-between; align-items: baseline; font: 400 15px/1 var(--display); letter-spacing: .3em; color: var(--accent); margin: 0 0 12px; }
+.card h3 small { font: 600 12px/1 var(--text); letter-spacing: .05em; color: var(--ink3); }
+.kick { font: 400 12px/1 var(--display); letter-spacing: .35em; color: var(--accent); margin-bottom: 8px; }
+.big { font: 400 32px/1.1 var(--display); letter-spacing: .02em; margin: 0 0 8px; }
+.q { font: 600 20px/1.3 var(--text); margin: 0 0 14px; }
+.q.lg { font-size: 23px; }
+.note { font-size: 14px; color: var(--ink3); line-height: 1.4; margin: 8px 0 0; }
+.story { font-size: 15px; }
+.row { display: flex; gap: 10px; }
+.row > * { flex: 1; }
+.stack { display: flex; flex-direction: column; gap: 10px; }
+
+/* ---- heroes */
+.heroes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.hero { position: relative; padding: 12px 10px; border-radius: 14px; background: #0006; box-shadow: inset 0 0 0 1px var(--line); text-align: left; border: 0; color: var(--ink); font-family: var(--text); cursor: pointer; }
+.hero.on { box-shadow: 0 0 0 3px var(--gold); background: #0009; }
+.hero.taken { opacity: .45; }
+.hero .med { font-size: 18px; margin-bottom: 8px; }
+.hero b { display: block; font: 700 16px/1.1 var(--text); }
+.hero small { display: block; font-size: 12px; color: var(--ink3); margin: 2px 0 6px; }
+.hero .st { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; font: 700 10px/1 var(--text); letter-spacing: .1em; color: var(--ink3); }
+.hero .st .stars { font-size: 10px; }
+.hero .tk { position: absolute; right: 8px; top: 8px; font: 700 10px/1 var(--text); letter-spacing: .1em; background: #000a; padding: 4px 6px; border-radius: 6px; color: var(--ink2); }
+.abil { padding: 12px 14px; border-radius: 12px; background: #0006; box-shadow: inset 0 0 0 1px var(--line); margin-top: 12px; }
+.abil b { display: block; font: 400 14px/1 var(--display); letter-spacing: .25em; color: var(--gold); margin-bottom: 6px; }
+.abil p { margin: 0; font-size: 14px; color: var(--ink2); line-height: 1.4; }
+.plist { display: flex; flex-wrap: wrap; gap: 8px; }
+.plist span { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px 6px 6px; border-radius: 999px; background: #0006; font-size: 14px; font-weight: 600; }
+.plist span .med { font-size: 12px; }
+.plist span.off { opacity: .5; }
+.plist .tag { font: 700 10px/1 var(--text); letter-spacing: .15em; background: var(--accent); color: #fff; padding: 3px 5px; border-radius: 5px; }
+
+/* ---- status */
+#status { position: sticky; top: 0; z-index: 10; padding: 10px 12px; margin: -14px -12px 12px; background: linear-gradient(var(--bg3) 70%, transparent); }
+#status .in { max-width: 416px; margin: 0 auto; padding: 10px 12px; display: flex; align-items: center; gap: 10px; }
+#status .med { font-size: 20px; }
+#status .mid { flex: 1; min-width: 0; }
+#status .mid b { display: block; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#status .bar { font-size: 15px; margin-top: 4px; }
+#status .right { text-align: right; }
+#status .coins { font-size: 16px; }
+#status .bagb { display: block; margin-top: 4px; font: 700 12px/1 var(--text); letter-spacing: .1em; color: var(--ink3); border: 0; background: none; padding: 0; }
+#status .bagb.hot { color: var(--gold); }
+
+/* ---- tabs */
+.tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+.tabs button { flex: 1; font: 700 13px/1 var(--text); letter-spacing: .15em; padding: 12px 6px; border: 0; border-radius: 10px; background: #0005; color: var(--ink3); position: relative; }
+.tabs button.on { background: var(--gold-bg); color: var(--gold-ink); box-shadow: 0 2px 0 var(--gold-deep); }
+.tabs .n { position: absolute; right: 6px; top: -6px; min-width: 18px; height: 18px; border-radius: 9px; background: var(--bad); color: #fff; font-size: 11px; display: inline-flex; align-items: center; justify-content: center; padding: 0 5px; }
+
+/* ---- answers */
+.opts { display: flex; flex-direction: column; gap: 10px; }
+.opt { position: relative; display: flex; align-items: center; gap: 12px; text-align: left; padding: 14px 14px; border-radius: 12px; border: 0; background: #0006; box-shadow: inset 0 0 0 1px var(--line); color: var(--ink); font: 600 18px/1.25 var(--text); }
+.opt .let { flex: none; width: 36px; height: 36px; border-radius: 10px; background: var(--gold-bg); color: var(--gold-ink); display: inline-flex; align-items: center; justify-content: center; font: 400 20px/1 var(--display); }
+.opt.on { box-shadow: 0 0 0 3px var(--gold); background: #0009; }
+.opt.struck { opacity: .3; text-decoration: line-through; }
+.opt.wrong { background: #3a0e14; box-shadow: inset 0 0 0 1px var(--bad); }
+.opt.right { background: var(--good-bg); color: #fff; }
+.opt.right .let { background: #fff; color: var(--good2); }
+.opt:disabled { opacity: .55; }
+.opt.on:disabled, .opt.right:disabled, .opt.wrong:disabled { opacity: 1; }
+.locked { text-align: center; font: 400 15px/1 var(--display); letter-spacing: .3em; color: var(--ink3); margin-top: 14px; }
+.huge { text-align: center; font: 400 44px/1.1 var(--display); color: #fff; text-shadow: 0 3px 0 #000a; padding: 20px 0; }
+.huge.sm { font-size: 30px; }
+.readme { padding: 18px; border-radius: 14px; background: var(--gold-bg); color: var(--gold-ink); }
+.readme .kick { color: var(--gold-ink); opacity: .7; }
+.readme .q { font-size: 22px; margin: 0; }
+.tf { display: flex; gap: 10px; }
+.tf .btn { font-size: 28px; padding: 22px 0; }
+.pcard { text-align: center; padding: 16px; border-radius: 14px; background: #0006; box-shadow: inset 0 0 0 1px var(--line); margin-bottom: 12px; }
+.pcard .pic { font-size: 110px; line-height: 1; }
+.pcard .lbl { font: 600 18px/1.2 var(--text); margin-top: 6px; }
+.pcard.t { background: var(--good-bg); } .pcard.f { background: var(--bad-bg); }
+.typein { display: flex; gap: 8px; }
+.typein input { flex: 1; min-width: 0; font: 600 18px/1.2 var(--text); padding: 14px; border-radius: 12px; border: 0; background: #0006; color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); outline: none; }
+.typein input:focus { box-shadow: inset 0 0 0 2px var(--gold); }
+.typein .btn { flex: none; font-size: 16px; padding: 12px 16px; }
+.found { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px; }
+.found span { font-size: 13px; font-weight: 600; padding: 6px 10px; border-radius: 999px; background: var(--good-bg); color: #fff; }
+.found span.wrong { background: #3a0e14; color: var(--ink2); }
+.sides { display: flex; gap: 10px; }
+.sides .btn { font-size: 20px; padding: 24px 6px; }
+.sides .btn.on { box-shadow: 0 0 0 3px #fff, 0 .3em 0 var(--gold-deep); }
+.dots { display: flex; justify-content: center; gap: 6px; margin: 4px 0 12px; }
+.dots i { width: 12px; height: 12px; border-radius: 50%; background: #0008; box-shadow: inset 0 0 0 1px var(--line); }
+.dots i.on { background: var(--gold); } .dots i.now { box-shadow: 0 0 0 2px var(--accent); }
+.hint { margin-top: 12px; padding: 12px 14px; border-radius: 12px; background: var(--gold-bg); color: var(--gold-ink); font-size: 14px; font-weight: 600; }
+.ability { margin-top: 12px; }
+.clockbar { height: 6px; border-radius: 3px; background: #0007; overflow: hidden; margin: -6px 0 14px; }
+.clockbar i { display: block; height: 100%; background: var(--gold); transition: width .25s linear; }
+.clockbar.hot i { background: var(--bad); }
+
+/* ---- results */
+.verdict { text-align: center; padding: 14px 0 6px; }
+.verdict .big { font-size: 46px; }
+.verdict.ok .big { color: var(--good); }
+.verdict.no .big { color: var(--bad); }
+.verdict .nums { display: flex; justify-content: center; gap: 14px; font: 700 18px/1 var(--text); }
+.verdict .nums .d { color: #fff; } .verdict .nums .g { color: var(--gold); } .verdict .nums .l { color: var(--bad); }
+.ans { margin-top: 12px; padding: 12px 14px; border-radius: 12px; background: var(--good-bg); color: #fff; font-weight: 600; }
+.ans small { display: block; font: 700 10px/1 var(--text); letter-spacing: .25em; opacity: .8; margin-bottom: 4px; }
+
+/* ---- monster & paths */
+.mon { text-align: center; }
+.mon .face { font-size: 120px; line-height: 1; filter: drop-shadow(0 10px 14px #000a); animation: bob 3s ease-in-out infinite; }
+.mon .bar { font-size: 15px; margin: 10px 0; }
+.mon .bar.monster i { background: linear-gradient(90deg, #ff2d55, #ff7a1a); }
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+.pathbtn { display: block; width: 100%; text-align: left; padding: 14px; border-radius: 14px; border: 0; background: #0006; box-shadow: inset 0 0 0 1px var(--line); color: var(--ink); font-family: var(--text); }
+.pathbtn.on { box-shadow: 0 0 0 3px var(--gold); background: #0009; }
+.pathbtn .top { display: flex; align-items: center; gap: 10px; }
+.pathbtn .top .emo { font-size: 34px; }
+.pathbtn .top b { font: 400 20px/1.1 var(--display); letter-spacing: .02em; }
+.pathbtn .top small { display: block; font: 700 10px/1 var(--text); letter-spacing: .25em; color: var(--accent); margin-bottom: 4px; }
+.pathbtn p { margin: 8px 0 0; font-size: 13px; color: var(--ink3); line-height: 1.35; }
+.pathbtn .vt { display: flex; gap: 4px; margin-top: 8px; min-height: 18px; }
+.pathbtn .vt .med { font-size: 9px; }
+
+/* ---- shop & bag */
+.ware { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 12px; background: #0006; box-shadow: inset 0 0 0 1px var(--line); margin-bottom: 8px; }
+.ware .emo { font-size: 34px; flex: none; }
+.ware .info { flex: 1; min-width: 0; }
+.ware .info b { display: block; font-size: 15px; }
+.ware .info small { display: block; font-size: 12px; color: var(--ink3); line-height: 1.3; margin-top: 2px; }
+.ware .btn { flex: none; font-size: 14px; padding: 10px 12px; }
+.ware .btn.ghost { font-size: 12px; }
+.bagrow { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; background: #0006; box-shadow: inset 0 0 0 1px var(--line); margin-bottom: 8px; }
+.bagrow .emo { font-size: 30px; }
+.bagrow .info { flex: 1; min-width: 0; }
+.bagrow .info b { display: block; font-size: 14px; }
+.bagrow .info small { display: block; font-size: 11px; color: var(--ink3); line-height: 1.3; }
+.bagrow .btn { font-size: 12px; padding: 9px 10px; flex: none; }
+.empty { text-align: center; color: var(--ink3); font-size: 14px; padding: 14px; }
+
+/* ---- down overlay */
+.downcard { text-align: center; padding: 22px 16px; }
+.downcard .skull { font-size: 90px; line-height: 1; }
+.downcard .btn { width: 100%; font-size: 22px; padding: 18px; margin-top: 14px; }
+.d20 { display: inline-block; font-size: 80px; line-height: 1; }
+.d20.roll { animation: spin .7s ease-out; }
+@keyframes spin { from { transform: rotate(0) scale(.6); } to { transform: rotate(720deg) scale(1); } }
+
+/* ---- chat */
+.msgs { height: 42vh; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; padding: 4px 0; }
+.msg { align-self: flex-start; max-width: 84%; padding: 9px 12px; border-radius: 14px 14px 14px 4px; background: #0008; font-size: 15px; line-height: 1.3; }
+.msg.me { align-self: flex-end; background: var(--gold-bg); color: var(--gold-ink); border-radius: 14px 14px 4px 14px; }
+.chatIn { display: flex; gap: 8px; margin-top: 10px; }
+.chatIn input { flex: 1; min-width: 0; font: 500 16px/1.2 var(--text); padding: 12px; border-radius: 12px; border: 0; background: #0006; color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); outline: none; }
+.crow { display: flex; align-items: center; gap: 10px; padding: 10px 8px; border-bottom: 1px solid var(--line2); }
+.crow .med { font-size: 14px; }
+.crow .nm { flex: 1; min-width: 0; font-weight: 600; }
+.crow .nm small { display: block; font-weight: 400; color: var(--ink3); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.crow .n { background: var(--bad); color: #fff; border-radius: 999px; font-size: 12px; padding: 2px 7px; }
+.crow .go { color: var(--ink3); font-size: 22px; }
+
+/* ---- awards */
+.awards { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+.award { padding: 8px 12px; border-radius: 10px; background: var(--gold-bg); color: var(--gold-ink); font: 400 14px/1 var(--display); letter-spacing: .2em; }
+.ranks > div { display: flex; align-items: center; gap: 10px; padding: 8px 4px; border-bottom: 1px solid var(--line2); }
+.ranks .med { font-size: 14px; }
+.ranks span { flex: 1; font-weight: 600; }
+.ranks small { color: var(--ink3); font-size: 12px; }
+
+/* ---- pops */
+#toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(20px); z-index: 80; max-width: 90vw; padding: 12px 18px; border-radius: 999px; background: var(--gold-bg); color: var(--gold-ink); font-weight: 700; font-size: 15px; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; }
+#toast.on { opacity: 1; transform: translateX(-50%) translateY(0); }
+#toast.out { opacity: 0; }
+#pop { position: fixed; inset: 0; z-index: 70; display: none; align-items: center; justify-content: center; pointer-events: none; }
+#pop.on { display: flex; animation: popIn .25s cubic-bezier(.3, 1.4, .5, 1); }
+#pop.out { animation: popOut .25s ease-in forwards; }
+#pop > div { text-align: center; padding: 24px 30px; border-radius: 20px; background: #000c; box-shadow: 0 0 0 3px var(--gold); }
+#pop b { display: block; font: 400 46px/1 var(--display); letter-spacing: .04em; color: var(--gold); }
+#pop span { display: block; font-size: 15px; color: var(--ink2); margin-top: 6px; }
+#pop.good b { color: var(--good); } #pop.good > div { box-shadow: 0 0 0 3px var(--good); }
+#pop.bad b { color: var(--bad); } #pop.bad > div { box-shadow: 0 0 0 3px var(--bad); }
+@keyframes popIn { from { opacity: 0; transform: scale(.5); } to { opacity: 1; transform: scale(1); } }
+@keyframes popOut { from { opacity: 1; } to { opacity: 0; transform: scale(1.2); } }
+#offline { position: fixed; left: 50%; top: 10px; transform: translateX(-50%); z-index: 85; display: none; padding: 10px 16px; border-radius: 999px; background: var(--bad); color: #fff; font-weight: 700; font-size: 14px; }
+#offline.on { display: block; }
+.hitfx { animation: hitBg .5s ease-out; }
+@keyframes hitBg { 0% { box-shadow: inset 0 0 0 100vmax #ff4f5e55; } 100% { box-shadow: inset 0 0 0 100vmax transparent; } }
+</style>
+</head>
+<body>
+
+<section class="view on" id="join">
+  <div class="wrap">
+    <div class="logo"><div class="mk" data-logo></div><b data-title><span></span><small data-sub></small></b></div>
+    <form id="joinForm" class="j-card panel" autocomplete="off">
+      <label for="code"><span>ROOM CODE</span></label>
+      <input id="code" maxlength="4" placeholder="••••" autocapitalize="characters" autocorrect="off" spellcheck="false">
+      <label for="name"><span>YOUR NAME</span><span id="nameLeft" class="left">12</span></label>
+      <input id="name" maxlength="12" placeholder="Your name" autocapitalize="characters" autocorrect="off" spellcheck="false">
+      <button class="btn j-play" id="playBtn">PLAY</button>
+      <p id="joinErr"></p>
+      <p id="joinWait"></p>
+    </form>
+    <div id="deskTv">Hooking up the TV? <a href="/tv">Open the TV page</a> on the computer plugged into it.</div>
+    <p class="ver" id="ver"></p>
+  </div>
+</section>
+
+<section class="view" id="lobby"><div class="wrap"></div></section>
+<section class="view" id="play"><div class="wrap"></div></section>
+
+<div id="pop"><div><b></b><span></span></div></div>
+<div id="toast"></div>
+<div id="offline">Reconnecting…</div>
+
+<script src="/heroes.js"></script>
+<script src="/worlds.js"></script>
+<script src="/common.js"></script>
+<script>
+(function () {
+  'use strict';
+  var F = window.Game, H = window.Heroes, W = window.Worlds, $ = F.$, esc = F.esc, sfx = F.sfx;
+  var sess = F.store.get('lf.me', null);
+  var S = null, me = null, conn = null, hello = null, lastSeq = null;
+  var triedRejoinByName = false, typed = false;
+  var waiting = false, waited = false, waitTimer = null, online = false, LIVE_MS = 15 * 60 * 1000;
+  var ui = { tab: 'play', chatWith: null, picks: [], listed: [] };
+  var clockAt = 0;
+
+  function waitForGame() {
+    waiting = true; waited = true;
+    var bar = $('#offline'); bar.textContent = 'Hang tight. Bringing your game back…'; bar.classList.add('on');
+    clearTimeout(waitTimer);
+    waitTimer = setTimeout(function () { if (waiting && conn && hello) conn.send(hello); }, 2000);
+  }
+  function stopWaiting() { if (!waiting) return; waiting = false; clearTimeout(waitTimer); var bar = $('#offline'); bar.classList.remove('on'); bar.textContent = 'Reconnecting…'; }
+
+  document.querySelectorAll('[data-title] > span').forEach(function (n) { n.textContent = F.TITLE; });
+  document.querySelectorAll('[data-sub]').forEach(function (n) { n.textContent = F.SUB; });
+  document.querySelectorAll('[data-logo]').forEach(function (n) { n.innerHTML = F.LOGO; });
+  document.title = F.TITLE;
+  $('#ver').textContent = 'VERSION ' + F.VERSION;
+  F.pressFx();
+
+  function show(id) { document.querySelectorAll('.view').forEach(function (n) { n.classList.toggle('on', n.id === id); }); }
+  var toastTimer, toastOut;
+  function toast(msg) {
+    var t = $('#toast');
+    clearTimeout(toastTimer); clearTimeout(toastOut);
+    t.textContent = msg; t.classList.remove('out');
+    if (t.classList.contains('on')) F.bump(t, 1.06); else t.classList.add('on');
+    toastTimer = setTimeout(function () { t.classList.add('out'); toastOut = setTimeout(function () { t.classList.remove('on', 'out'); }, 200); }, 2800);
+  }
+  var popTimer, popOut;
+  function pop(kind, title, sub, ms) {
+    var el = $('#pop');
+    clearTimeout(popTimer); clearTimeout(popOut);
+    el.className = ''; void el.offsetWidth;
+    el.querySelector('b').textContent = title; el.querySelector('span').textContent = sub || '';
+    el.className = 'on ' + kind;
+    popTimer = setTimeout(function () { el.classList.add('out'); popOut = setTimeout(function () { el.className = ''; }, 260); }, ms || 1500);
+  }
+  function buzz(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) { /* ignore */ } }
+  function send(m) { if (!conn || !conn.send(m)) toast('Reconnecting… try again in a second'); }
+  function player(id) { return S ? (S.players.filter(function (p) { return p.id === id; })[0] || null) : null; }
+  function pname(id) { var p = player(id); return p ? p.name : '?'; }
+  function heroOf(id) { var g = S.game; if (g && g.players[id]) return g.players[id].hero; var p = player(id); return p ? p.hero : 'knight'; }
+  function med(id) { var g = S.game, down = g && g.players[id] && g.players[id].down; return F.heroArt(heroOf(id), down ? 'down' : ''); }
+  function G() { return S.game; }
+  var LET = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+
+  function fitViewport() { var vv = window.visualViewport; document.documentElement.style.setProperty('--vh', (vv ? vv.height : innerHeight) + 'px'); }
+  if (window.visualViewport) visualViewport.addEventListener('resize', fitViewport);
+  addEventListener('resize', fitViewport); fitViewport();
+
+  var lookId = null;
+  function applyLook() {
+    var g = S.game, look = g ? g.worldInfo.look : null, id = g ? g.world : 'none';
+    if (lookId === id) return; lookId = id;
+    if (look) { F.applyLook(document.body, look); var m = document.querySelector('meta[name=theme-color]'); if (m) m.content = look.bg[2]; }
+  }
+
+  /* ------------------------------------------------------------- join */
+  var codeIn = $('#code'), nameIn = $('#name');
+  var qCode = (new URLSearchParams(location.search).get('code') || '').toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4);
+  codeIn.value = qCode || '';
+  nameIn.value = F.store.get('lf.name', '');
+  function joinReady() {
+    codeIn.value = codeIn.value.toUpperCase().replace(/[^A-Z]/g, '');
+    $('#nameLeft').textContent = (12 - nameIn.value.length) + ' left';
+    var ok = codeIn.value.length === 4 && nameIn.value.trim().length > 0;
+    $('#playBtn').classList.toggle('ready', ok);
+    return ok;
+  }
+  codeIn.addEventListener('input', joinReady); nameIn.addEventListener('input', joinReady); joinReady();
+  $('#joinForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    sfx.unlock();
+    if (!joinReady()) { $('#joinErr').textContent = 'Enter the 4-letter room code and your name.'; F.shake($('#joinForm')); return; }
+    $('#joinErr').textContent = '';
+    typed = true;
+    F.store.set('lf.name', nameIn.value.trim().toUpperCase());
+    joinBusy(true);
+    var nm = nameIn.value.trim();
+    if (sess && sess.token && sess.code === codeIn.value && sess.name === nm.toUpperCase()) { triedRejoinByName = false; start({ t: 'rejoin', code: sess.code, token: sess.token }); }
+    else start({ t: 'join', code: codeIn.value, name: nm, hero: F.store.get('lf.hero', null) });
+  });
+  var busyTimer;
+  function joinBusy(on) {
+    var b = $('#playBtn');
+    clearTimeout(busyTimer);
+    b.classList.toggle('busy', on); b.textContent = on ? 'JOINING…' : 'PLAY';
+    $('#joinWait').textContent = '';
+    if (on) busyTimer = setTimeout(function () { $('#joinWait').textContent = 'Waking the game up. The first join of the night can take up to a minute.'; }, 3500);
+  }
+  function start(h) {
+    hello = h; lastSeq = null;
+    if (!conn) conn = F.connect({ hello: function () { return hello; }, onMessage: onMessage, onStatus: function (ok) { online = ok; $('#offline').classList.toggle('on', !ok && !!S); } });
+    else if (!conn.send(h)) { joinBusy(false); $('#joinErr').textContent = 'Connecting… tap PLAY again in a moment.'; }
+  }
+  function backToJoin(msg) {
+    stopWaiting();
+    S = null; me = null; hello = null; sess = null; ui = { tab: 'play', chatWith: null, picks: [], listed: [] };
+    F.store.del('lf.me');
+    joinBusy(false);
+    show('join');
+    $('#joinErr').textContent = msg || '';
+    if (msg) F.shake($('#joinForm'));
+  }
+
+  function onMessage(m) {
+    if (m.t === 'joined') {
+      joinBusy(false); stopWaiting(); waited = false;
+      sess = { code: m.code, token: m.token, name: (sess && sess.name) || nameIn.value.trim().toUpperCase(), at: Date.now() };
+      F.store.set('lf.me', sess);
+      hello = { t: 'rejoin', code: m.code, token: m.token };
+      triedRejoinByName = false;
+      F.stayAwake();
+    } else if (m.t === 'error') {
+      var ours = sess && hello && (hello.t === 'rejoin' || (hello.t === 'join' && String(hello.code).toUpperCase() === sess.code));
+      if (m.code === 'noroom' && m.wait && ours && (S || Date.now() - (sess.at || 0) < LIVE_MS)) waitForGame();
+      else if (m.code === 'noroom' && hello && hello.t === 'rejoin' && sess && sess.name && !triedRejoinByName) { triedRejoinByName = true; hello = { t: 'join', code: sess.code, name: sess.name }; conn.send(hello); }
+      else if (!S || m.code === 'noroom') {
+        if (waited && sess && m.code === 'noroom') {
+          var keep = sess;
+          backToJoin('Your game hasn’t come back yet. Once the TV shows it again, tap PLAY to jump back in.');
+          sess = keep; F.store.set('lf.me', keep);
+          codeIn.value = keep.code; if (keep.name) nameIn.value = keep.name; joinReady(); waited = false;
+        } else backToJoin(typed || S ? m.msg : '');
+      } else { toast(m.msg); buzz(60); }
+    } else if (m.t === 'left') {
+      if (conn && m.replaced) { conn.stop(); conn = null; }
+      backToJoin(m.kicked ? 'You were removed from the game.' : m.replaced ? 'This game was opened on another device or tab.' : '');
+    } else if (m.t === 'listed') {
+      ui.listed.push(m);
+      if (m.ok && m.dup) toast('Already on the list!'); else if (!m.ok) { sfx.wrong(); buzz(40); }
+      else { sfx.found(); }
+      render([]);
+    } else if (m.t === 'state') {
+      if ($('#playBtn').classList.contains('busy')) joinBusy(false);
+      if (sess && Date.now() - (sess.at || 0) > 20000) { sess.at = Date.now(); F.store.set('lf.me', sess); }
+      var list = m.s.fx || [], fresh = [];
+      if (lastSeq === null) lastSeq = list.length ? list[list.length - 1].seq : 0;
+      else { fresh = list.filter(function (e) { return e.seq > lastSeq; }); if (fresh.length) lastSeq = fresh[fresh.length - 1].seq; }
+      S = m.s; me = S.me; clockAt = Date.now(); window.__S = S;
+      render(fresh);
+    }
+  }
+  if (sess && sess.code && sess.token && (!qCode || qCode === sess.code)) start({ t: 'rejoin', code: sess.code, token: sess.token });
+  setInterval(function () { if (S && sess && online) { sess.at = Date.now(); F.store.set('lf.me', sess); } }, 60000);
+
+  /* ----------------------------------------------------------- render */
+  var lastChatCount = {}, lastQ = null;
+  function render(fresh) {
+    var has = {};
+    fresh.forEach(function (e) { has[e.type] = e; });
+    applyLook();
+    if (has.restored) toast('We’re back. Right where we left off.');
+    if (has.loaded) toast('Picked up where you left off. Welcome back.');
+    chatPings();
+    if (S.phase === 'lobby') { renderLobby(); show('lobby'); return; }
+    show('play');
+    var g = G(), qid = g.q ? g.q.id : null;
+    if (qid !== lastQ) { ui.picks = []; ui.listed = []; lastQ = qid; }
+    fxPhone(fresh);
+    renderPlay();
+  }
+
+  /* ----------------------------------------------------------- chat bookkeeping */
+  function seenKey() { return 'lf.seen.' + (S ? S.code : ''); }
+  function seenChats() { return F.store.get(seenKey(), {}); }
+  function unreadFrom(peer) { var list = (me.chats || {})[peer] || [], sn = seenChats()[peer] || 0, n = 0; list.forEach(function (m, k) { if (k >= sn && m.from === peer) n++; }); return n; }
+  function markSeen(peer) { var s = seenChats(); s[peer] = ((me.chats || {})[peer] || []).length; F.store.set(seenKey(), s); }
+  function unreadTotal() { var n = 0; Object.keys(me.chats || {}).forEach(function (p) { n += unreadFrom(p); }); return n; }
+  function chatPings() {
+    if (!me) return;
+    Object.keys(me.chats || {}).forEach(function (peer) {
+      var list = me.chats[peer], was = lastChatCount[peer] || 0;
+      if (list.length > was && was > 0 && list[list.length - 1].from === peer) {
+        if (ui.tab === 'chat' && ui.chatWith === peer) markSeen(peer);
+        else { sfx.ping(); buzz(40); toast(pname(peer) + ': ' + list[list.length - 1].text.slice(0, 60)); }
+      }
+      lastChatCount[peer] = list.length;
+    });
+  }
+
+  /* ------------------------------------------------------------ lobby */
+  function renderLobby() {
+    var mine = H.heroById(me.hero);
+    var h = '<div class="bar2"><span>ROOM <b>' + esc(S.code) + '</b></span><span>' + esc(me.name) + (me.isCaptain ? ' · <b>CAPTAIN</b>' : '') + '</span></div>';
+    h += '<div class="card panel" data-key="pick"><h3><span>PICK YOUR HERO</span><small>Tap to change</small></h3><div class="heroes">' + H.HEROES.map(function(x) {
+      var taken = S.players.filter(function (p) { return p.hero === x.id && p.id !== me.id; })[0];
+      return '<button class="hero' + (x.id === me.hero ? ' on' : '') + (taken ? ' taken' : '') + '" data-a="hero" data-v="' + x.id + '"' + (taken ? ' disabled' : '') + '>' + (taken ? '<span class="tk">' + esc(taken.name) + '</span>' : '') + F.heroArt(x.id) + '<b>' + esc(x.name) + '</b><small>' + esc(x.cls) + '</small><div class="st"><span>ATTACK</span>' + F.stars(x.attack) + '<span>HEALTH</span>' + F.stars(x.health) + '<span>GOLD</span>' + F.stars(x.gold) + '</div></button>';
+    }).join('') + '</div><div class="abil"><b>' + esc(mine.name.toUpperCase()) + ' · ' + esc(mine.ability.toUpperCase()) + '</b><p>' + esc(mine.about) + ' <em>' + esc(mine.tagline) + '</em></p></div></div>';
+    h += '<div class="card panel" data-key="who"><h3><span>THE PARTY</span><small>' + S.players.length + ' of ' + S.maxPlayers + '</small></h3><div class="plist">' + S.players.map(function (p) { return '<span class="' + (p.on ? '' : 'off') + '">' + med(p.id) + esc(p.name) + (p.bot ? '<span class="tag">BOT</span>' : '') + '</span>'; }).join('') + '</div>' +
+      '<p class="note">The road: ' + S.settings.worlds.map(function (id) { var w = W.worldById(id); return w.emoji + ' ' + w.name; }).join(' → ') + (S.settings.final ? ' → 👑 The Quizmaster' : '') + '. ' + S.settings.fights + ' fights per world, then its boss. Settings are on the TV.</p></div>';
+    if (me.isCaptain) h += '<button class="btn accent" data-a="start" style="width:100%;font-size:22px;padding:18px"' + (S.players.length < S.minPlayers ? ' disabled' : '') + '>' + (S.players.length < S.minPlayers ? 'Waiting for ' + S.minPlayers + ' heroes' : 'Begin the adventure') + '</button>';
+    else h += '<p class="note" style="text-align:center">' + esc(pname(S.captain)) + ' (or the TV) starts the run.</p>';
+    h += '<p class="note" style="text-align:center;margin-top:14px"><button class="chip" data-a="leave">Leave</button></p>';
+    F.morph($('#lobby .wrap'), h);
+  }
+
+  /* ------------------------------------------------------------ play */
+  function renderPlay() {
+    var g = G(), h = '';
+    h += statusHtml();
+    h += tabsHtml();
+    if (ui.tab === 'bag') h += bagHtml();
+    else if (ui.tab === 'chat') h += chatHtml();
+    else h += mainHtml();
+    F.morph($('#play .wrap'), h);
+    if (S.phase === 'question' && g.q && !me.down) { var inp = $('#typeIn'); if (inp && !inp.value && !document.activeElement.closest('.chatIn')) { /* keep focus free until tapped */ } }
+  }
+  function statusHtml() {
+    var g = G(), hero = H.heroById(me.hero);
+    if (!me.playing) return '<div id="status" data-key="status"><div class="in panel"><div class="mid"><b>Watching</b></div></div></div>';
+    var n = (me.items || []).length;
+    return '<div id="status" data-key="status"><div class="in panel">' + med(me.id) + '<div class="mid"><b>' + esc(me.name) + ' · ' + esc(hero.name) + '</b>' + F.bar(me.hp, me.maxHp) + '</div><div class="right">' + F.coins(me.coins) + '<button class="bagb' + (n ? ' hot' : '') + '" data-a="tab" data-v="bag">🎒 ' + n + ' ITEM' + (n === 1 ? '' : 'S') + '</button></div></div></div>';
+  }
+  function tabsHtml() {
+    var unread = unreadTotal();
+    return '<div class="tabs" data-key="tabs">' + [['play', 'PLAY'], ['bag', 'BAG'], ['chat', 'CHAT']].map(function (t) { var n = t[0] === 'chat' ? unread : 0; return '<button data-a="tab" data-v="' + t[0] + '" class="' + (ui.tab === t[0] ? 'on' : '') + '">' + t[1] + (n ? '<span class="n">' + n + '</span>' : '') + '</button>'; }).join('') + '</div>';
+  }
+  function clockHtml() {
+    var g = G(), c = g.clock;
+    if (!c) return '';
+    var left = Math.max(0, c.left - (Date.now() - clockAt)), pct = c.len ? 100 * left / c.len : 0;
+    return '<div class="clockbar' + (left < 5200 ? ' hot' : '') + '" data-key="clockbar" data-live><i style="width:' + pct.toFixed(1) + '%"></i></div>';
+  }
+  setInterval(function () {
+    var g = S && S.game, c = g && g.clock, el = $('#clockbar');
+    if (!el || !c) return;
+    var left = Math.max(0, c.left - (Date.now() - clockAt)), pct = c.len ? 100 * left / c.len : 0;
+    el.firstElementChild.style.width = pct.toFixed(1) + '%';
+    el.classList.toggle('hot', left < 5200);
+  }, 200);
+
+  function mainHtml() {
+    var g = G(), w = g.worldInfo, ph = S.phase;
+    if (!me.playing) return '<div class="card panel"><p class="note">You’re watching. Tap PLAY on the join screen with a new name to jump in.</p></div>';
+    var h = '';
+    switch (ph) {
+      case 'intro':
+        h = card('world', '<div class="kick">' + esc(w.kicker) + '</div><div class="big">' + esc(w.name) + '</div><p class="story">' + esc(w.story) + '</p>' + (me.isCaptain ? '<button class="btn ghost" data-a="h" data-v="skipIntro" style="width:100%;margin-top:12px">Skip the intro</button>' : ''));
+        break;
+      case 'fork': {
+        var f = g.fork;
+        h = card('fork', '<div class="kick">CHOOSE YOUR PATH</div>' + clockHtml() + '<div class="stack">' + f.options.map(function (o, i) {
+          var sub = o.kind === 'fight' ? H.TYPES[o.type].blurb : o.kind === 'shop' ? 'Spend your gold on potions and tricks.' : o.kind === 'camp' ? 'Everyone heals. The fallen get back up.' : 'Free gold, and maybe something shiny.';
+          var ttl = o.kind === 'fight' ? 'A fight: ' + o.label : o.kind === 'shop' ? w.shop.title : o.kind === 'camp' ? 'Rest at ' + w.camp.name : w.treasure.name;
+          var votes = Object.keys(f.votes).filter(function (id) { return f.votes[id] === i; });
+          return '<button class="pathbtn' + (me.vote === i ? ' on' : '') + '" data-a="vote" data-v="' + i + '"><div class="top">' + F.emo(o.kind === 'fight' ? H.TYPES[o.type].emoji : { shop: '🛒', camp: '🔥', treasure: '💰' }[o.kind]) + '<div><small>' + (i === 0 ? '◀ LEFT' : 'RIGHT ▶') + '</small><b>' + esc(ttl) + '</b></div></div><p>' + esc(sub) + '</p><div class="vt">' + votes.map(function (id) { return med(id); }).join('') + '</div></button>';
+        }).join('') + '</div>' + (me.isCaptain ? '<div class="row" style="margin-top:12px"><button class="btn sm" data-a="h" data-v="lockPath" data-i="0">Lock in LEFT</button><button class="btn sm" data-a="h" data-v="lockPath" data-i="1">Lock in RIGHT</button></div>' : '<p class="note">Most votes wins. The captain can lock it in.</p>'));
+        break;
+      }
+      case 'walk':
+        h = card('walk', '<div class="big">Onward…</div><p class="story">' + esc((g.log.slice(-1)[0] || {}).text || '') + '</p>');
+        break;
+      case 'enter': case 'between':
+        h = monsterCard() + card('enter', '<div class="kick">' + (g.fight.boss ? 'THE BOSS' : 'A MONSTER') + '</div><p class="story">' + esc(g.fight.qCount ? g.fight.taunt : g.fight.intro) + '</p><p class="note">Get ready…</p>');
+        break;
+      case 'question':
+        h = me.down ? downCard() + monsterCard() : questionCard();
+        break;
+      case 'result':
+        h = resultCard() + (me.down ? downCard() : '');
+        break;
+      case 'strike':
+        h = strikeCard() + (me.down ? downCard() : '');
+        break;
+      case 'revive':
+        h = me.down ? downCard() : card('rev', '<div class="kick">EVERYONE IS DOWN</div><p class="story">Roll for your lives. If nobody gets up, the monster wins.</p>');
+        break;
+      case 'victory': {
+        var loot = g.loot || { coins: 0, items: {} };
+        h = card('victory', '<div class="kick">' + esc(g.fight.name.toUpperCase()) + ' DEFEATED</div><div class="big" style="color:var(--gold)">' + (g.fight.boss ? 'BOSS DOWN!' : 'VICTORY!') + '</div><p class="story">' + esc(g.fight.dead) + '</p><p class="note">+' + loot.coins + ' gold' + (me.loot ? ', and you found ' + H.item(me.loot).emoji + ' ' + esc(H.item(me.loot).name) : '') + '.</p>');
+        break;
+      }
+      case 'wipe':
+        h = card('wipe', '<div class="kick">' + esc(g.fight.name.toUpperCase()) + '</div><div class="big" style="color:var(--bad)">THE PARTY FALLS</div><p class="story">“' + esc(g.fight.taunt) + '”</p>' + (me.isCaptain ? '<div class="row" style="margin-top:12px"><button class="btn accent" data-a="h" data-v="retry">Rise again</button><button class="btn ghost" data-a="h" data-v="giveUp">End the run</button></div>' : '<p class="note">The captain or the TV decides: rise again at half health, or end the run.</p>'));
+        break;
+      case 'shop':
+        h = shopCard();
+        break;
+      case 'camp':
+        h = card('camp', '<div class="kick">A REST</div><div class="big">' + esc(w.camp.name) + '</div><p class="story">' + esc(w.camp.line) + '</p><p class="note">Everyone heals 250. The fallen get back up.</p>');
+        break;
+      case 'treasure':
+        h = card('treasure', '<div class="kick">TREASURE</div><div class="big">' + esc(w.treasure.name) + '</div><p class="story">' + esc(w.treasure.line) + '</p>' + (me.treasure ? '<p class="note">You get <b style="color:var(--gold)">+' + me.treasure.coins + ' gold</b>' + (me.treasure.item ? ' and ' + H.item(me.treasure.item).emoji + ' ' + esc(H.item(me.treasure.item).name) : '') + '.</p>' : ''));
+        break;
+      case 'worldDone':
+        h = card('wd', '<div class="kick">' + esc(w.kicker) + '</div><div class="big">' + esc(w.name) + ' cleared</div><p class="story">' + esc(w.done) + '</p>');
+        break;
+      case 'gameOver':
+        h = endCard();
+        break;
+    }
+    return h;
+  }
+  function card(key, inner, cls) { return '<div class="card panel ' + (cls || '') + '" data-key="' + key + '">' + inner + '</div>'; }
+  function monsterCard() {
+    var f = G().fight;
+    if (!f) return '';
+    return '<div class="card panel mon" data-key="mon"><div class="face" data-live>' + F.emo(f.emoji) + '</div><div class="big">' + esc(f.name) + '</div>' + F.bar(f.hp, f.maxHp, 'monster') + '</div>';
+  }
+  function downCard() {
+    var g = G(), cost = g.reviveCost;
+    return '<div class="card panel downcard" data-key="down"><div class="skull">💀</div><div class="big" style="color:var(--bad)">YOU’RE DOWN</div><p class="note">You can’t answer until you’re back on your feet. Roll the d20 for ' + cost + ' gold: the higher the roll, the more health you come back with. A natural 20 is free.</p>' +
+      (me.canRevive ? '<button class="btn accent" data-a="revive">🎲 Roll for your life · ' + cost + ' 🪙</button>' : '<p class="note" style="margin-top:12px">You have ' + me.coins + ' gold. You’ll get back up when the fight is won or the party rests.</p>') + '</div>';
+  }
+
+  function questionCard() {
+    var g = G(), q = g.q, mq = me.q || {}, f = g.fight;
+    var head = '<div class="kick">' + esc(f.name.toUpperCase()) + ' ASKS · ' + esc(H.TYPES[q.t].name.toUpperCase()) + (q.finisher ? ' · FINISHER!' : '') + '</div>';
+    var body = '';
+    var hint = mq.hint ? (mq.hint.text ? '<div class="hint">💡 ' + esc(mq.hint.text) + '</div>' : '') : '';
+    var mageBtn = me.hero === 'mage' && !(me.used || {}).clair && ['mc', 'double', 'hidden'].indexOf(q.t) >= 0 ? '<button class="btn ghost sm ability" data-a="ability" style="width:100%">🔮 Clairvoyance: strike a wrong answer for everyone</button>' : '';
+    var usable = (me.items || []).filter(function (id) { return (id === 'hint' && !mq.hint && q.t !== 'tot' && q.t !== 'picture') || (id === 'time' && !q.timeUsed && q.t !== 'tot'); });
+    var quick = usable.length ? '<div class="row" style="margin-top:12px">' + usable.filter(function (x, i, a) { return a.indexOf(x) === i; }).map(function (id) { var it = H.item(id); return '<button class="btn ghost sm" data-a="use" data-v="' + id + '">' + it.emoji + ' ' + esc(it.name) + '</button>'; }).join('') + '</div>' : '';
+    var struckMine = (mq.struck || []).concat(mq.hint && mq.hint.struck != null ? [mq.hint.struck] : []);
+    switch (q.t) {
+      case 'mc': {
+        var locked = mq.answered;
+        body = '<div class="q lg">' + esc(q.text) + '</div><div class="opts">' + q.opts.map(function (o, i) {
+          var struck = q.struck.indexOf(i) >= 0 || struckMine.indexOf(i) >= 0;
+          var cls = (locked && mq.i === i ? ' on' : '') + (struck ? (mq.retrying && mq.i === i ? ' wrong' : ' struck') : '');
+          return '<button class="opt' + cls + '" data-a="mc" data-v="' + i + '"' + (locked || struck ? ' disabled' : '') + '><span class="let">' + LET[i] + '</span><span>' + esc(o) + '</span></button>';
+        }).join('') + '</div>' + (locked ? '<div class="locked">LOCKED IN</div>' : mq.retrying ? '<div class="hint">🔁 Second Chance! That one was wrong. Pick again.</div>' : '');
+        break;
+      }
+      case 'double': {
+        var lockedD = mq.answered, picks = lockedD ? (mq.picks || []) : ui.picks;
+        body = '<div class="q lg">' + esc(q.text) + '</div><p class="note" style="margin:-6px 0 10px">Two of these are right. Tap both.</p><div class="opts">' + q.opts.map(function (o, i) {
+          var struck = q.struck.indexOf(i) >= 0 || struckMine.indexOf(i) >= 0;
+          var cls = (picks.indexOf(i) >= 0 ? ' on' : '') + (struck ? (mq.retrying ? ' wrong' : ' struck') : '');
+          return '<button class="opt' + cls + '" data-a="dbl" data-v="' + i + '"' + (lockedD || struck ? ' disabled' : '') + '><span class="let">' + LET[i] + '</span><span>' + esc(o) + '</span></button>';
+        }).join('') + '</div>' + (lockedD ? '<div class="locked">LOCKED IN</div>' : mq.retrying ? '<div class="hint">🔁 Second Chance! Not both right. Pick again.</div>' : '');
+        break;
+      }
+      case 'hidden':
+        if (mq.role === 'reader') body = '<div class="readme"><div class="kick">📣 READ THIS OUT LOUD</div><div class="q">' + esc(mq.text) + '</div></div><p class="note">Everyone else is holding one answer each. Whoever has the right one should shout it and tap it. You don’t answer this one.</p>';
+        else if (mq.role === 'holder') body = '<div class="q">' + esc(pname(q.reader)) + ' is reading the question. You’re holding:</div><div class="huge' + (mq.option.length > 18 ? ' sm' : '') + '">' + esc(mq.option) + '</div>' + (mq.struck ? '<div class="hint">🔮 Clairvoyance says: not this one.</div>' : '') + '<button class="btn accent" data-a="claim" style="width:100%;font-size:24px;padding:20px"' + (mq.claimed || mq.struck ? ' disabled' : '') + '>' + (mq.claimed ? 'YOU CALLED IT' : 'I’VE GOT IT!') + '</button><p class="note">Tap only if your answer is the right one. A wrong call costs you health.</p>';
+        else body = '<div class="q">A hidden question. You got back up mid-question, so you’re sitting this one out.</div>';
+        break;
+      case 'list':
+        body = '<div class="q lg">' + esc(q.text) + '</div><p class="note" style="margin:-6px 0 10px">' + (q.found.length) + ' of ' + q.n + ' found by the party. Type what you know, one at a time.</p><div class="typein"><input id="typeIn" data-key="typeIn" maxlength="60" placeholder="An answer…" autocapitalize="words" autocorrect="off" enterkeyhint="send"><button class="btn" data-a="type">Go</button></div><div class="found">' + ui.listed.slice(-8).map(function (l) { return '<span class="' + (l.ok ? '' : 'wrong') + '">' + esc(l.text) + (l.dup ? ' (again)' : '') + '</span>'; }).join('') + '</div>';
+        break;
+      case 'picture': {
+        var lockedP = mq.answered;
+        body = mq.card ? '<div class="q">' + esc(q.text) + '</div><div class="pcard"><div class="pic">' + F.emo(mq.card.e) + '</div><div class="lbl">' + esc(mq.card.label) + '</div></div>' + (lockedP ? '<div class="locked">LOCKED IN: ' + (mq.v ? 'TRUE' : 'FALSE') + '</div>' : (mq.retrying ? '<div class="hint" style="margin:0 0 10px">🔁 Second Chance! Try the other one.</div>' : '') + '<div class="tf"><button class="btn green" data-a="tf" data-v="1">TRUE</button><button class="btn red" data-a="tf" data-v="0">FALSE</button></div>') : '<div class="q">A picture round. You got back up mid-question, so there’s no card for you this time.</div>';
+        break;
+      }
+      case 'tot': {
+        var dots = ''; for (var d = 0; d < q.count; d++) dots += '<i class="' + (d < q.wi ? 'on' : d === q.wi ? 'now' : '') + '"></i>';
+        body = '<div class="q">' + esc(q.text) + '</div><div class="dots">' + dots + '</div><div class="huge" data-key="w' + q.wi + '">' + esc(q.word || '') + '</div><div class="sides">' + q.o.map(function (o, i) { return '<button class="btn' + (mq.tapped === i ? ' on' : '') + (q.gap && q.wordRight === i ? ' green' : '') + '" data-a="tot" data-v="' + i + '"' + (mq.tapped != null || q.gap ? ' disabled' : '') + '>' + esc(o) + '</button>'; }).join('') + '</div>';
+        break;
+      }
+      case 'riddle':
+        body = '<div class="q lg">' + esc(q.text) + '</div>' + (mq.answered ? '<div class="locked">LOCKED IN: ' + esc(mq.text || '') + '</div>' : (mq.retrying ? '<div class="hint" style="margin:0 0 10px">🔁 Second Chance! “' + esc(mq.text || '') + '” was wrong. One more try.</div>' : '') + '<div class="typein"><input id="typeIn" data-key="typeIn" maxlength="60" placeholder="Your answer…" autocapitalize="sentences" autocorrect="off" enterkeyhint="send"><button class="btn" data-a="type">Go</button></div>');
+        break;
+    }
+    return card('q', head + clockHtml() + body + hint + mageBtn + quick);
+  }
+  function resultCard() {
+    var g = G(), q = g.q, r = me.result, f = g.fight;
+    var v = '';
+    if (r && !r.out) {
+      var ok = r.ok;
+      var nums = (r.dmg ? '<span class="d">⚔️ ' + F.num(r.dmg) + '</span>' : '') + (r.gold ? '<span class="g">+' + r.gold + ' 🪙</span>' : '') + (r.lost ? '<span class="l">−' + r.lost + ' ♥</span>' : '');
+      var ttl = q.t === 'tot' ? r.right + ' of ' + q.count : q.t === 'list' ? (r.n ? r.n + ' found' : 'none found') : r.half ? 'HALF RIGHT' : ok ? 'RIGHT!' : r.froze ? 'TOO SLOW' : 'WRONG';
+      v = '<div class="verdict ' + (ok ? 'ok' : 'no') + '"><div class="big">' + ttl + '</div><div class="nums">' + nums + '</div>' + (r.notes && r.notes.length ? '<p class="note">' + esc(r.notes.join(' · ')) + '</p>' : '') + (q.t === 'hidden' && r.holder ? '<p class="note">You called it!</p>' : '') + '</div>';
+    }
+    var ans = '';
+    if (q.t === 'mc') ans = '<div class="ans"><small>THE ANSWER</small>' + esc(q.opts[q.right]) + '</div>';
+    else if (q.t === 'double') ans = '<div class="ans"><small>THE ANSWERS</small>' + q.rights.map(function (i) { return esc(q.opts[i]); }).join(' & ') + '</div>';
+    else if (q.t === 'hidden') ans = '<div class="ans"><small>THE QUESTION</small>' + esc(q.text) + '<small style="margin-top:8px">THE ANSWER</small>' + esc(q.opts[q.right]) + '</div>';
+    else if (q.t === 'riddle') ans = '<div class="ans"><small>THE ANSWER</small>' + esc(q.answer) + '</div>';
+    else if (q.t === 'list') ans = '<div class="ans"><small>THE LIST</small>' + (q.all || []).join(', ') + '</div>';
+    else if (q.t === 'picture') ans = '<div class="ans"><small>TRUE ONES</small>' + q.cards.filter(function (c, i) { return q.truths[i]; }).map(function (c) { return c.e + ' ' + esc(c.label); }).join(', ') + '</div>';
+    var strip = f.hp <= 0 ? '<p class="note" style="text-align:center;color:var(--gold)">' + esc(f.name) + ' goes down!</p>' : g.result && g.result.hits ? '<p class="note" style="text-align:center">The party hits ' + esc(f.name) + ' for ' + F.num(g.result.hits) + '.</p>' : '';
+    return card('res', v + ans + strip) + monsterCard();
+  }
+  function strikeCard() {
+    var g = G(), st = g.strike || {}, mine = st.by ? st.by[me.id] : null;
+    var what = !mine ? 'You were down. It missed you.' : mine.shielded ? '🛡️ Shield Wall! ' + esc(pname(st.wall.knight)) + ' took the hit for you.' : mine.coins != null ? 'You lose ' + mine.coins + ' gold.' : mine.hp ? 'You lose ' + mine.hp + ' health.' + (mine.wall ? ' (You took a teammate’s hit, too. Shield Wall.)' : '') : 'It missed you!';
+    return card('strike', '<div class="kick">' + esc(g.fight.name.toUpperCase()) + '</div><div class="big" style="color:var(--bad)">' + (st.decoy ? 'STRAW!' : st.kind === 'rob' ? 'ROBBED!' : 'STRIKE!') + '</div><p class="story">' + esc((g.log.slice(-1)[0] || {}).text || '') + '</p><p class="note">' + what + '</p>') + monsterCard();
+  }
+  function shopCard() {
+    var g = G(), w = g.worldInfo, sh = g.shop, done = sh.done[me.id];
+    var h = '<div class="kick">' + esc(w.shop.title.toUpperCase()) + '</div><p class="story">“' + esc(sh.line) + '”</p>' + clockHtml();
+    h += sh.items.map(function (id) { var it = H.item(id), can = me.coins >= it.price && (me.items || []).length < H.MAX_ITEMS; return '<div class="ware" data-key="w' + id + '">' + F.emo(it.emoji) + '<div class="info"><b>' + esc(it.name) + '</b><small>' + esc(it.about) + '</small></div><button class="btn sm' + (can ? '' : ' ghost') + '" data-a="buy" data-v="' + id + '"' + (can ? '' : ' disabled') + '>' + it.price + ' 🪙</button></div>'; }).join('');
+    h += '<p class="note">Bag: ' + (me.items || []).length + ' of ' + H.MAX_ITEMS + '. Give items to teammates from the BAG tab.</p>';
+    h += '<button class="btn ' + (done ? 'ghost' : 'accent') + '" data-a="done" style="width:100%;margin-top:8px"' + (done ? ' disabled' : '') + '>' + (done ? 'Waiting for the others…' : 'I’m done shopping') + '</button>';
+    if (me.isCaptain) h += '<button class="btn ghost sm" data-a="h" data-v="leaveShop" style="width:100%;margin-top:8px">Everyone’s done: move on</button>';
+    return card('shop', h) + (me.down ? downCard() : '');
+  }
+  function endCard() {
+    var g = G(), mineAw = (g.awards || []).filter(function (a) { return a.id === me.id; });
+    var h = '<div class="kick">' + (g.legend ? 'THE RUN IS COMPLETE' : 'THE RUN ENDS') + '</div><div class="big" style="color:var(--gold)">' + (g.legend ? 'LEGENDS' : 'NOT TODAY') + '</div><p class="story">' + esc((g.log.slice(-1)[0] || {}).text || '') + '</p>';
+    if (mineAw.length) h += '<div class="awards">' + mineAw.map(function (a) { return '<span class="award">' + esc(a.title) + '</span>'; }).join('') + '</div>';
+    h += '<div class="ranks">' + g.order.filter(function (id) { return g.players[id] && !g.players[id].left; }).sort(function (a, b) { return g.players[b].stats.damage - g.players[a].stats.damage; }).map(function (id) { var st = g.players[id].stats, acc = st.right + st.wrong ? Math.round(100 * st.right / (st.right + st.wrong)) : 0; return '<div>' + med(id) + '<span>' + esc(pname(id)) + '</span><small>' + F.num(st.damage) + ' dmg · ' + acc + '%</small></div>'; }).join('') + '</div>';
+    if (me.isCaptain) h += '<button class="btn accent" data-a="h" data-v="lobby" style="width:100%;margin-top:14px">Play again</button>';
+    return card('end', h);
+  }
+
+  /* ------------------------------------------------------------ bag */
+  function bagHtml() {
+    var g = G(), items = me.items || [], hero = H.heroById(me.hero);
+    var counts = {}; items.forEach(function (id) { counts[id] = (counts[id] || 0) + 1; });
+    var h = '<div class="card panel" data-key="bag"><h3><span>YOUR BAG</span><small>' + items.length + ' of ' + H.MAX_ITEMS + '</small></h3>';
+    if (!items.length) h += '<p class="empty">Nothing yet. Shops and treasure fill it.</p>';
+    Object.keys(counts).forEach(function (id) {
+      var it = H.item(id), canUse = it.use !== 'passive' && !me.down && !(it.use === 'question' && S.phase !== 'question');
+      if (id === 'decoy' && (!g.fight || g.fight.decoy || ['question', 'result', 'strike', 'enter', 'between'].indexOf(S.phase) < 0)) canUse = false;
+      h += '<div class="bagrow" data-key="b' + id + '">' + F.emo(it.emoji) + '<div class="info"><b>' + esc(it.name) + (counts[id] > 1 ? ' ×' + counts[id] : '') + '</b><small>' + esc(it.about) + (it.use === 'passive' ? ' Works on its own.' : '') + '</small></div>' +
+        (it.use !== 'passive' ? '<button class="btn sm' + (canUse ? '' : ' ghost') + '" data-a="use" data-v="' + id + '"' + (canUse ? '' : ' disabled') + '>Use</button>' : '') + '<button class="btn ghost sm" data-a="giveWho" data-v="' + id + '">Give</button></div>';
+    });
+    var buffs = Object.keys(me.buffs || {});
+    if (buffs.length) h += '<p class="note">Armed: ' + buffs.map(function (b) { return H.item(b) ? H.item(b).emoji + ' ' + H.item(b).name : b; }).join(', ') + '.</p>';
+    h += '</div>';
+    h += '<div class="card panel" data-key="me"><h3><span>' + esc(hero.name.toUpperCase()) + '</span><small>' + esc(hero.cls) + '</small></h3><div class="hero on" style="width:100%;box-sizing:border-box;pointer-events:none">' + F.heroArt(me.hero) + '<div class="st"><span>ATTACK ' + H.ATTACK[hero.attack] + '</span>' + F.stars(hero.attack) + '<span>HEALTH ' + H.HEALTH[hero.health] + '</span>' + F.stars(hero.health) + '<span>GOLD ' + H.GOLD[hero.gold] + ' A HIT</span>' + F.stars(hero.gold) + '</div></div><div class="abil"><b>' + esc(hero.ability.toUpperCase()) + '</b><p>' + esc(hero.about) + '</p></div>' +
+      '<p class="note">Revive roll costs ' + g.reviveCost + ' gold right now. ' + (me.oxygen ? 'Oxygen Reserve used.' : '') + '</p><p class="note" style="text-align:center;margin-top:14px"><button class="chip" data-a="leave">Leave the game</button></p></div>';
+    return h;
+  }
+  function giveWho(item) {
+    var g = G(), others = g.order.filter(function (id) { return id !== me.id && g.players[id] && !g.players[id].left; });
+    if (!others.length) { toast('Nobody to give it to.'); return; }
+    var it = H.item(item);
+    F.dialog({ title: 'Give ' + it.name, html: '<div class="stack">' + others.map(function (id) { return '<button class="dlg-btn pri" data-i="' + others.indexOf(id) + '" style="text-align:left">' + esc(pname(id)) + ' · ' + esc(H.heroById(g.players[id].hero).name) + ' (' + g.players[id].items + ' items)</button>'; }).join('') + '</div>', buttons: others.map(function (id) { return { label: '', value: id, kind: 'hidden' }; }).concat([{ label: 'Cancel', kind: 'ghost', value: false }]) })
+      .then(function (v) { if (v) send({ t: 'gift', item: item, to: v }); });
+  }
+
+  /* ------------------------------------------------------------ chat */
+  function chatHtml() {
+    var others = S.players.filter(function (p) { return p.id !== me.id && !p.bot; });
+    if (ui.chatWith && !others.some(function (p) { return p.id === ui.chatWith; })) ui.chatWith = null;
+    if (ui.chatWith) {
+      var peer = ui.chatWith, list = (me.chats || {})[peer] || [];
+      markSeen(peer);
+      var h = '<div class="card panel" data-key="chat"><h3><span><button class="chip" data-a="chatBack">‹ Back</button></span><small>' + esc(pname(peer)) + ' · private</small></h3>';
+      h += '<div class="msgs" id="msgs" data-key="msgs">' + (list.length ? list.map(function (m) { return '<div class="msg ' + (m.from === me.id ? 'me' : '') + '">' + esc(m.text) + '</div>'; }).join('') : '<p class="empty">Nothing yet. Only the two of you can see this.</p>') + '</div>';
+      h += '<div class="chatIn"><input id="chatIn" data-key="chatIn" maxlength="240" placeholder="Message ' + esc(pname(peer)) + '…" enterkeyhint="send"><button class="btn sm" data-a="chatSend">Send</button></div></div>';
+      setTimeout(function () { var m = $('#msgs'); if (m) m.scrollTop = m.scrollHeight; }, 30);
+      return h;
+    }
+    var h2 = '<div class="card panel" data-key="chatList"><h3><span>PRIVATE CHAT</span><small>Just the two of you</small></h3>';
+    if (!others.length) h2 += '<p class="empty">Nobody else to message yet.</p>';
+    others.forEach(function (p) {
+      var list = (me.chats || {})[p.id] || [], last = list[list.length - 1], n = unreadFrom(p.id);
+      h2 += '<div class="crow tap" data-a="chatWith" data-id="' + p.id + '">' + med(p.id) + '<div class="nm">' + esc(p.name) + '<small>' + (last ? esc((last.from === me.id ? 'You: ' : '') + last.text) : 'Say something') + '</small></div>' + (n ? '<span class="n">' + n + '</span>' : '<span class="go">›</span>') + '</div>';
+    });
+    return h2 + '</div>';
+  }
+
+  /* ------------------------------------------------------------ effects on the phone */
+  function fxPhone(fresh) {
+    var g = G();
+    fresh.forEach(function (e) {
+      switch (e.type) {
+        case 'question': sfx.ask(); buzz(30); if (g.q && g.q.t === 'hidden' && me.q && me.q.role === 'reader') { pop('', '📣 READ IT!', 'You have the question'); buzz([80, 60, 80]); } break;
+        case 'word': sfx.word(); break;
+        case 'result': {
+          var r = me.result;
+          if (!r || r.out) break;
+          if (r.ok) { sfx.right(); pop('good', r.half ? 'HALF!' : 'RIGHT!', (r.dmg ? '⚔️ ' + r.dmg : '') + (r.gold ? ' · +' + r.gold + ' 🪙' : ''), 1400); }
+          else if (r.lost) { sfx.wrong(); buzz(120); pop('bad', r.froze ? 'TOO SLOW' : 'WRONG', '−' + r.lost + ' health', 1400); hurtFx(); }
+          break;
+        }
+        case 'strike': { var st = g.strike, mine = st && st.by ? st.by[me.id] : null; if (mine && (mine.hp || mine.coins)) { sfx.strike(); buzz([120, 60, 120]); hurtFx(); } break; }
+        case 'down': if (e.pid === me.id) { sfx.down(); buzz(300); pop('bad', 'YOU’RE DOWN', 'Roll for your life', 2000); } break;
+        case 'revive': if (e.pid === me.id) { sfx.dice(); setTimeout(function () { sfx.revive(); pop(e.nat20 ? 'good' : '', '🎲 ' + e.roll, e.nat20 ? 'Natural 20! Full health, free.' : 'Back up with ' + e.hp + ' health', 2200); }, 600); } break;
+        case 'autorevive': if (e.pid === me.id) { sfx.revive(); pop('good', 'BACK UP!', 'Something caught you', 1800); } break;
+        case 'found': if (e.pid === me.id) sfx.found(); break;
+        case 'wrongClaim': if (e.pid === me.id) { sfx.wrong(); buzz(120); hurtFx(); } break;
+        case 'second': if (e.pid === me.id) { sfx.ping(); buzz(50); } break;
+        case 'gift': if (e.to === me.id) { sfx.coin(); toast(pname(e.from) + ' gave you ' + (H.item(e.item) || {}).name + '!'); } break;
+        case 'buy': if (e.pid === me.id) sfx.coins(); break;
+        case 'drink': if (e.pid === me.id) sfx.drink(); break;
+        case 'victory': sfx.victory(e.boss); break;
+        case 'enter': sfx.enter(e.boss); break;
+        case 'wipe': sfx.defeat(); break;
+        case 'gameOver': if (g.legend) sfx.legend(); else sfx.defeat(); break;
+        case 'allDown': sfx.down(); break;
+        case 'leftGame': if (e.pid === me.id) break; break;
+      }
+    });
+  }
+  function hurtFx() { var b = document.body; b.classList.remove('hitfx'); void b.offsetWidth; b.classList.add('hitfx'); }
+
+  /* ------------------------------------------------------------ taps */
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-a]');
+    if (!b || b.disabled) return;
+    var a = b.getAttribute('data-a'), v = b.getAttribute('data-v');
+    sfx.unlock();
+    switch (a) {
+      case 'hero': F.store.set('lf.hero', v); send({ t: 'hero', h: v }); sfx.tap(); break;
+      case 'start': send({ t: 'h', a: 'start' }); break;
+      case 'leave': F.confirm('Leave the game?', S.game ? 'Your hero leaves the party. You can come back with the same name.' : 'You can join again any time.', 'Leave', true).then(function (ok) { if (ok) send({ t: 'leave' }); }); break;
+      case 'tab': ui.tab = v; if (v !== 'chat') ui.chatWith = null; renderPlay(); break;
+      case 'h': { var m = { t: 'h', a: v }; if (v === 'lockPath') m.i = Number(b.getAttribute('data-i')); send(m); break; }
+      case 'vote': send({ t: 'vote', i: Number(v) }); sfx.tap(); break;
+      case 'mc': send({ t: 'answer', i: Number(v) }); sfx.tap(); buzz(20); break;
+      case 'dbl': {
+        var i = Number(v), k = ui.picks.indexOf(i);
+        if (k >= 0) ui.picks.splice(k, 1); else ui.picks.push(i);
+        sfx.tap();
+        if (ui.picks.length === 2) { send({ t: 'answer', picks: ui.picks.slice() }); buzz(20); }
+        else if (ui.picks.length > 2) ui.picks = ui.picks.slice(-2);
+        renderPlay();
+        break;
+      }
+      case 'claim': send({ t: 'answer' }); buzz(40); break;
+      case 'tf': send({ t: 'answer', v: v === '1' }); sfx.tap(); buzz(20); break;
+      case 'tot': send({ t: 'answer', i: Number(v) }); sfx.tap(); break;
+      case 'type': typeGo(); break;
+      case 'use': send({ t: 'use', item: v }); break;
+      case 'giveWho': giveWho(v); break;
+      case 'ability': send({ t: 'ability' }); break;
+      case 'buy': send({ t: 'buy', item: v }); break;
+      case 'done': send({ t: 'done' }); break;
+      case 'revive': { var d = b; d.disabled = true; d.innerHTML = '<span class="d20 roll">🎲</span>'; send({ t: 'revive' }); break; }
+      case 'chatWith': ui.chatWith = b.getAttribute('data-id'); renderPlay(); break;
+      case 'chatBack': ui.chatWith = null; renderPlay(); break;
+      case 'chatSend': chatGo(); break;
+    }
+  });
+  function typeGo() {
+    var inp = $('#typeIn'); if (!inp) return;
+    var text = inp.value.trim(); if (!text) return;
+    send({ t: 'answer', text: text });
+    inp.value = ''; inp.focus();
+  }
+  function chatGo() {
+    var inp = $('#chatIn'); if (!inp || !ui.chatWith) return;
+    var text = inp.value.trim(); if (!text) return;
+    send({ t: 'chat', to: ui.chatWith, text: text });
+    inp.value = ''; inp.focus();
+  }
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter') return;
+    if (e.target.id === 'typeIn') { e.preventDefault(); typeGo(); }
+    if (e.target.id === 'chatIn') { e.preventDefault(); chatGo(); }
+  });
+})();
+</script>
+</body>
+</html>
