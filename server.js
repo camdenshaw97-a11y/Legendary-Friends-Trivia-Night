@@ -23,7 +23,7 @@ const Q = require('./questions');
 
 const PORT = process.env.PORT || 3000;
 const PUB = __dirname;
-const PAGE_FILES = new Set(['index.html', 'tv.html', 'common.js', 'heroes.js', 'worlds.js', 'style.css', 'anton.woff2', 'baskerville.woff2', 'baskerville-italic.woff2', 'baskerville-bold.woff2']);
+const PAGE_FILES = new Set(['index.html', 'tv.html', 'common.js', 'heroes.js', 'worlds.js', 'style.css', 'cinzel-600.woff2', 'cinzel-800.woff2', 'crimson-400.woff2', 'crimson-600.woff2', 'crimson-400i.woff2']);
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
   '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png',

@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.1 — Oct 29, 2026
+The "Stonehall" restyle, from Camden's design handoff (Claude Design).
+
+- Every TV and phone screen re-cut in carved stone: chamfered slabs with a gold inlay line, no rounded corners anywhere, hexagonal hero medallions, diamond letter badges, ingot-shaped buttons and bars, an octagonal iron clock, stone pillars at the TV's edges, an ember glow at the bottom of every screen.
+- Type: Cinzel (600/800) for headings and labels, Crimson Pro (400/600, italic) for body, questions and story; self-hosted woff2 next to the pages. Anton and Baskerville are gone.
+- Monsters sit in a hexagonal stone frame over a pulsing ember aura; bosses get the red frame, skull crown and a "BOSS OF <WORLD>" label. Party plates are octagon slabs with trapezoid CAPTAIN / READER / READY tabs and diamond lock marks. The question panel shows the medallions of everyone who has locked in.
+- Hero stat stars became gold ◆◇ diamonds. The logo is a gold hexagon with a carved question mark.
+- World scenery is kept but faded well back so it doesn't fight the monster frame.
+- Tests: three timing-flaky checks made deterministic.
+- Hero and monster art is still emoji; the slots are in place for real art later.
+
+
 ## 1.0 — Oct 29, 2026
 Named "Legendary Friends: Quest for Trivia".
 First version, built for the Halloween party.

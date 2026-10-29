@@ -8,7 +8,7 @@
   F.TITLE = 'LEGENDARY FRIENDS';
   F.SUB = 'QUEST FOR TRIVIA';
   // Shown small on the start screens. Goes up with every change; CHANGELOG.md says what each one was.
-  F.VERSION = '1.0';
+  F.VERSION = '1.1';
 
   F.$ = function (sel, root) { return (root || document).querySelector(sel); };
   F.esc = function (s) {
@@ -274,7 +274,7 @@
     var h = H.heroById(heroId) || H.HEROES[0];
     return '<span class="med' + (cls ? ' ' + cls : '') + '" style="--c1:' + h.c1 + ';--c2:' + h.c2 + '">' + F.emo(h.pic) + '</span>';
   };
-  F.stars = function (n) { var s = ''; for (var i = 0; i < 3; i++) s += '<i class="' + (i < n ? 'on' : '') + '"></i>'; return '<span class="stars">' + s + '</span>'; };
+  F.stars = function (n) { var s = ''; for (var i = 0; i < 3; i++) s += '<i class="' + (i < n ? 'on' : '') + '"></i>'; return '<span class="stars" aria-label="' + n + ' of 3">' + s + '</span>'; };
   F.bar = function (v, max, cls) {
     var pct = max ? Math.max(0, Math.min(100, 100 * v / max)) : 0;
     return '<div class="bar ' + (cls || '') + (pct <= 25 ? ' low' : '') + '"><i style="width:' + pct.toFixed(1) + '%"></i><b>' + F.num(v) + '</b></div>';
@@ -283,8 +283,14 @@
   F.itemChip = function (id, extra) { var it = H.item(id); return it ? '<span class="chip-item">' + F.emo(it.emoji) + F.esc(it.name) + (extra || '') + '</span>' : ''; };
   F.typeBadge = function (t, finisher) { var ty = H.TYPES[t]; return '<span class="tbadge' + (finisher ? ' fin' : '') + '">' + F.emo(finisher ? '🔥' : ty.emoji) + (finisher ? 'FINISHER · ' : '') + F.esc(ty.name.toUpperCase()) + '</span>'; };
 
-  // The game's mark: a shield with a bolt and a question mark.
-  F.LOGO = '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M50 4 L88 18 V48 C88 72 70 90 50 97 C30 90 12 72 12 48 V18 Z" fill="#1b1030" stroke="#ffd36b" stroke-width="5" stroke-linejoin="round"/><path d="M50 12 L80 23 V48 C80 67 66 82 50 88 C34 82 20 67 20 48 V23 Z" fill="#3a1f6b"/><path d="M56 22 L38 52 H50 L44 78 L64 44 H52 Z" fill="#ffd36b"/><text x="31" y="60" font-family="Anton, Impact, sans-serif" font-size="30" fill="#fff" opacity=".9">?</text></svg>';
+  // The game's mark: a gold hexagon with a carved question mark.
+  var logoN = 0;
+  // Each copy gets its own gradient ids: a gradient defined inside a hidden element doesn't paint.
+  F.logo = function () {
+    var k = ++logoN;
+    return '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="lfg' + k + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e6c774"/><stop offset="1" stop-color="#a87c2a"/></linearGradient><radialGradient id="lfs' + k + '" cx=".5" cy=".4" r=".6"><stop offset="0" stop-color="#3a3440"/><stop offset="1" stop-color="#0d0b10"/></radialGradient></defs><polygon points="50,0 93,25 93,75 50,100 7,75 7,25" fill="url(#lfg' + k + ')"/><polygon points="50,6 88,28 88,72 50,94 12,72 12,28" fill="url(#lfs' + k + ')"/><text x="50" y="68" text-anchor="middle" font-family="Cinzel, Georgia, serif" font-weight="800" font-size="52" fill="#d4a84b">?</text></svg>';
+  };
+  F.LOGO = F.logo();
 
   // The world's colors onto a page.
   F.applyLook = function (el, look) {

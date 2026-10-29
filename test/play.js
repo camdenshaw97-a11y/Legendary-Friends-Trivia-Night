@@ -216,6 +216,7 @@ async function main() {
   check('the witch’s Healing Potion heals double (200 → full 500)', ph[0].state.me.hp === 500 && !ph[0].state.me.items.includes('heal'));
   ph[0].send({ t: 'gift', item: 'mystery', to: ids[2] });
   await ph[2].until(s => s.me.items.includes('mystery'));
+  await ph[0].until(s => !s.me.items.includes('mystery'));
   check('an item can be gifted to a teammate', !ph[0].state.me.items.includes('mystery') && ph[2].state.me.items.includes('mystery') && G(tv).players[ids[0]].stats.gifts === 1);
   ph[0].send({ t: 'use', item: 'double' });
   await ph[0].until(s => s.me.buffs.double);
@@ -294,7 +295,7 @@ async function main() {
   await late.ready;
   late.send({ t: 'join', code, name: 'EVE', hero: 'ghost' });
   await late.until(s => s && s.me && s.me.playing);
-  check('a late joiner jumps in as a fresh hero', late.state.me.hero === 'ghost' && late.state.me.coins === 0 && late.state.me.hp === 700 && tv.state.game.order.includes(late.state.me.id));
+  check('a late joiner jumps in as a fresh hero', late.state.me.hero === 'ghost' && late.state.me.coins === 0 && late.state.me.maxHp === 700 && tv.state.game.order.includes(late.state.me.id));
   late.send({ t: 'leave' });
   await tv.until(s => !s.game.order.includes(late.state.me.id) || G(tv).players[late.state.me.id].left);
   check('leaving takes you out of the party', G(tv).players[late.state.me.id].left === true);
@@ -317,9 +318,17 @@ async function main() {
   clearTimeout(r2room.timer); clearTimeout(r2room.botTimer); rooms.delete(tv2.state.code); tv2.close(); ava2.close();
 
   // Wipe and retry: everyone on one hit point and broke, and the monster is due to strike.
+  // Make sure the question in play is a plain multiple choice, so a right answer from everyone can't hurt anyone.
+  G(tv).fight.types = ['mc'];
   await tv.until(s => s.phase === 'question', 12000);
+  if (G(tv).q.t !== 'mc') {
+    for (const p of ph) if (!p.state.me.down) answerAs(tv, p, true);
+    await tv.until(s => s.phase === 'result', 12000);
+    G(tv).fight.hp = 9999; G(tv).fight.maxHp = 9999;
+    await tv.until(s => s.phase === 'question' && G(tv).q.t === 'mc', 20000);
+  }
   const g3 = G(tv);
-  for (const id of g3.order) if (g3.players[id] && !g3.players[id].left) { g3.players[id].hp = 1; g3.players[id].coins = 0; }
+  for (const id of g3.order) if (g3.players[id] && !g3.players[id].left) { g3.players[id].hp = 1; g3.players[id].coins = 0; g3.players[id].items = []; g3.players[id].buffs = {}; g3.players[id].oxygen = true; }
   g3.players[tv.state.players[4].id].down = true;   // the bot sits this one out
   g3.fight.hp = 9999; g3.fight.maxHp = 9999; g3.fight.shieldWall = true; g3.fight.decoy = false;
   g3.fight.qCount = (g3.fight.strike.every || 3) - 1;
