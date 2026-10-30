@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.1 — Oct 30, 2026
+From the second play test.
+
+- This or That: each word now stays up for 6 seconds (was 4.2) — the table found it too quick.
+- Tests: the Healing Potion check waited on a stale phone state; it now waits for the potion to leave the bag.
+
 ## 1.2 — Oct 29, 2026
 The fight is a battle, not a form — the TV's fight screen rebuilt from Camden's "Stonehall Fight Scene" design.
 

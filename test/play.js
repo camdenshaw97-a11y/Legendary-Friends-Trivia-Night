@@ -208,11 +208,11 @@ async function main() {
   const ids = ph.map(p => p.state.me.id);
   g1.players[ids[0]].items.push('heal', 'hint', 'double', 'decoy', 'mystery', 'time');
   g1.players[ids[1]].items.push('shield');
-  g1.players[ids[0]].hp = 200;
   tv.send({ t: 'h', a: 'skip' });
   await phase(tv, 'fork');
+  G(tv).players[ids[0]].hp = 200;   // set once the fork is up, so nothing on the way there tops her up first
   ph[0].send({ t: 'use', item: 'heal' });
-  await ph[0].until(s => s.me.hp === 500);
+  await ph[0].until(s => !s.me.items.includes('heal'));   // the phone still shows full health until the server's next push
   check('the witch’s Healing Potion heals double (200 → full 500)', ph[0].state.me.hp === 500 && !ph[0].state.me.items.includes('heal'), 'hp ' + ph[0].state.me.hp + ' phase ' + tv.state.phase);
   ph[0].send({ t: 'gift', item: 'mystery', to: ids[2] });
   await ph[2].until(s => s.me.items.includes('mystery'));
