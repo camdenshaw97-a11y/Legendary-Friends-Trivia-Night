@@ -59,7 +59,7 @@ const WALK_MS = 2600;
 const ENTER_MS = 4200;
 const LOCK_MS = 1300;                     // everyone has answered: a beat before the reveal
 const RESULT_MS = 5200;
-const STRIKE_MS = 3400;
+const STRIKE_MS = 3600;
 const VICTORY_MS = 6000;
 const SHOP_MS = 75000;
 const CAMP_MS = 5500;
@@ -995,7 +995,9 @@ function resolveQuestion(room) {
   fx(room, 'result', { hits: res.hits, dead: f.hp <= 0 });
   if (f.hp <= 0) { log(room, f.name + ' takes ' + res.hits + ' and goes down!', 'kill'); }
   else if (res.hits) log(room, 'The party hits ' + f.name + ' for ' + res.hits + '.', 'hit');
-  setClock(room, 'result', RESULT_MS);
+  // The TV plays the round out: the reveal, then every hero who hit charges in turn, then the monster's turn.
+  const charges = Object.values(res.by).filter(x => x.dmg > 0).length;
+  setClock(room, 'result', Math.max(RESULT_MS, 1600 + 950 * charges + (f.hp <= 0 ? 2200 : 1400)));
 }
 
 function afterResult(room) {

@@ -321,7 +321,6 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; font-f
 #flash.on { animation: flashIn .35s ease-out; }
 @keyframes flashIn { 0% { opacity: .9; } 100% { opacity: 0; } }
 #stage.shake { animation: stageShake .5s ease-out; }
-@keyframes stageShake { 0%, 100% { transform: translate(-50%, -50%) scale(var(--s, 1)); } 20% { transform: translate(calc(-50% - 12px), calc(-50% + 6px)) scale(var(--s, 1)); } 40% { transform: translate(calc(-50% + 10px), calc(-50% - 8px)) scale(var(--s, 1)); } 60% { transform: translate(calc(-50% - 8px), calc(-50% + 4px)) scale(var(--s, 1)); } 80% { transform: translate(calc(-50% + 5px), calc(-50% - 3px)) scale(var(--s, 1)); } }
 #btnQr { position: absolute; left: 40px; bottom: 216px; z-index: 20; display: none; font: 600 13px/1 var(--display); letter-spacing: .2em; padding: 12px 16px; border: 0; background: var(--pit); color: var(--ink3); box-shadow: inset 0 0 0 1px var(--edge); cursor: pointer; }
 #btnQr.on { display: block; }
 #qrBig { position: absolute; inset: 0; z-index: 50; display: none; background: #000d; align-items: center; justify-content: center; }
@@ -344,6 +343,79 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; font-f
 @keyframes fall { to { transform: translateY(1140px) rotate(720deg); } }
 .firework { position: absolute; width: 10px; height: 10px; clip-path: var(--diamond); z-index: 35; pointer-events: none; animation: spark .9s ease-out forwards; }
 @keyframes spark { to { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; } }
+
+/* ---- the battlefield (fight phases) */
+#stage.fight #party { display: none; }
+#stage.fight #main { bottom: 0; }
+#stage.fight #scene { opacity: 0; }
+#ground { position: absolute; left: 0; right: 0; top: 536px; height: 440px; background: linear-gradient(rgba(255, 255, 255, .04), transparent 6%), radial-gradient(ellipse at 50% 100%, #1a1420, transparent 70%); pointer-events: none; }
+#ground::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: linear-gradient(90deg, transparent, #4a4452 20%, #d4a84b 50%, #4a4452 80%, transparent); opacity: .5; }
+#stage.fight #qpanel, #stage.fight .enterCard, #stage.fight .strikeCard { top: 26px; height: 440px; padding: 36px 50px; transition: opacity .5s, transform .5s; }
+#stage.fight #qpanel .qtext { font-size: 44px; margin-bottom: 20px; }
+#stage.fight #qpanel .qtext.sm { font-size: 36px; }
+#stage.fight .opts { gap: 16px; }
+#stage.fight .opt2 { font-size: 30px; padding: 0 24px; gap: 20px; }
+#stage.fight .opt2 .let { width: 54px; height: 54px; font-size: 22px; }
+#stage.fight .slot { height: 64px; font-size: 26px; }
+#stage.fight .pcard .pic { font-size: 84px; }
+#stage.fight .pcard .lbl { font-size: 20px; }
+#stage.fight .tot .word { font-size: 100px; }
+#stage.fight .tot .side { padding: 20px; font-size: 34px; }
+#stage.fight .enterCard { padding: 36px 56px; }
+#stage.fight .enterCard h2 { font-size: 84px; margin-bottom: 16px; }
+#stage.fight .enterCard .story, #stage.fight .strikeCard .story { font-size: 28px; }
+#stage.fight .strikeCard { padding: 36px 56px; }
+#stage.fight .strikeCard h2 { font-size: 84px; margin: 14px 0 18px; }
+#stage.fight #monster { right: 120px; top: 176px; width: 480px; height: 600px; }
+#stage.fight #monster .next { margin-bottom: 14px; }
+#stage.fight #monster .aura { top: 249px; width: 560px; height: 560px; }
+#stage.fight #monster .frame, #stage.fight #monster.boss .frame { top: 249px; width: 440px; height: 440px; }
+#stage.fight #monster .body, #stage.fight #monster.boss .body { font-size: 270px; }
+#stage.fight #monster .crown { top: 40px; }
+#stage.fight #monster .sub { top: 478px; }
+#stage.fight #monster .name, #stage.fight #monster.boss .name { top: 498px; font-size: 40px; }
+#stage.fight #monster.boss .name { font-size: 34px; }
+#stage.fight #monster .bar { left: 40px; right: 40px; top: 560px; }
+#stage.fight #monster .decoy { left: -10px; top: 400px; }
+#monster { transition: transform .36s cubic-bezier(.2, .9, .3, 1); z-index: 4; }
+#monster .frame .in { will-change: transform; }
+#monster.dead .frame { filter: grayscale(1) brightness(.45); transition: filter 1s; }
+#monster.dead .aura { opacity: 0; transition: opacity 1s; }
+#monster .body { transition: filter .15s; }
+#field { position: absolute; inset: 0; pointer-events: none; }
+.spr { position: absolute; width: 200px; text-align: center; transition: transform .34s cubic-bezier(.2, .9, .3, 1), filter .3s; }
+.spr .scale { transform-origin: 50% 0; }
+.spr .tags { height: 34px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; margin-bottom: 6px; }
+.spr .tag { display: inline-block; padding: 4px 10px; font: 800 10px/1 var(--display); letter-spacing: .2em; clip-path: var(--trap); white-space: nowrap; }
+.spr .tag.cap { background: var(--gold); color: var(--gold-ink); }
+.spr .tag.st { background: var(--accent); color: #fff; }
+.spr .tag.st.done { background: var(--good2); }
+.spr .mark { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; clip-path: var(--diamond); font: 800 15px/1 var(--display); color: #fff; }
+.spr .mark.lock, .spr .mark.ok { background: var(--good2); box-shadow: 0 0 12px var(--good2); }
+.spr .mark.no { background: var(--bad2); box-shadow: 0 0 12px var(--bad2); }
+.spr .hex { position: relative; width: 140px; height: 140px; margin: 0 auto; clip-path: var(--hex); background: linear-gradient(160deg, #4a4452, #15121a); display: flex; align-items: center; justify-content: center; transition: transform .4s; }
+.spr .hex .in { width: 128px; height: 128px; clip-path: var(--hex); background: linear-gradient(var(--c1), var(--c2)); display: flex; align-items: center; justify-content: center; }
+.spr .hex .emo { font-size: 76px; line-height: 1; filter: drop-shadow(0 6px 8px #0009); }
+.spr .tab { margin: 10px auto 0; width: 180px; padding: 8px 10px; box-sizing: border-box; clip-path: var(--oct10); background: linear-gradient(165deg, #3a3440, #1a161f); box-shadow: inset 0 2px 0 #fff2; }
+.spr .tab b { display: block; font: 800 16px/1 var(--display); letter-spacing: .04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.spr .tab .bar { height: 12px; margin-top: 7px; }
+.spr .tab .bar b { font-size: 9px; }
+.spr .tab .row { display: flex; justify-content: space-between; margin-top: 6px; font: 600 13px/1 var(--text); color: var(--gold); }
+.spr .tab .row .bag { color: var(--ink3); }
+.spr.off { opacity: .55; }
+.spr.down .hex { filter: grayscale(1) brightness(.55); transform: rotate(-14deg) translateY(16px); }
+.spr.down .tab { filter: grayscale(.6) brightness(.7); }
+.spr.down .hex::after { content: '💀'; position: absolute; right: 14px; bottom: 10px; font-size: 30px; filter: none; }
+#strip { position: absolute; left: 50%; top: 196px; transform: translateX(-50%); padding: 18px 44px; clip-path: var(--ingot18); background: #0d0b10ee; box-shadow: inset 0 0 0 2px var(--sc, #e6c774); font: 800 40px/1 var(--display); letter-spacing: .08em; color: var(--sc, #e6c774); text-shadow: 0 3px 0 #000, 0 0 30px var(--sc, #e6c774); white-space: nowrap; animation: stripF .6s ease-out both; z-index: 6; pointer-events: none; }
+.pop { position: absolute; font: 800 64px/1 var(--display); text-shadow: 0 4px 0 #000, 0 0 24px currentColor; white-space: nowrap; animation: popF 1.1s ease-out both; z-index: 12; pointer-events: none; }
+.slash { position: absolute; width: 520px; height: 34px; background: linear-gradient(90deg, transparent, #fff 30%, #ffe9a8 50%, #fff 70%, transparent); animation: slashF .45s ease-out both; pointer-events: none; mix-blend-mode: screen; z-index: 11; }
+#flash.red { background: radial-gradient(circle at 30% 60%, rgba(255, 90, 42, .7), rgba(184, 35, 31, .35)); }
+@keyframes recoilF { 0% { transform: translate(0, 0) rotate(0); } 20% { transform: translate(46px, -10px) rotate(6deg); } 55% { transform: translate(-14px, 6px) rotate(-3deg); } 100% { transform: translate(0, 0) rotate(0); } }
+@keyframes hurtF { 0% { transform: translate(0, 0); } 15% { transform: translate(-22px, 0); } 35% { transform: translate(18px, 0); } 55% { transform: translate(-12px, 0); } 75% { transform: translate(8px, 0); } 100% { transform: translate(0, 0); } }
+@keyframes popF { 0% { opacity: 0; transform: translate(-50%, 10px) scale(.6); } 15% { opacity: 1; transform: translate(-50%, -30px) scale(1.25); } 40% { transform: translate(-50%, -50px) scale(1); } 100% { opacity: 0; transform: translate(-50%, -130px) scale(1); } }
+@keyframes slashF { 0% { opacity: 0; transform: translate(-50%, -50%) rotate(-30deg) scale(.4); } 25% { opacity: 1; transform: translate(-50%, -50%) rotate(-30deg) scale(1.1); } 100% { opacity: 0; transform: translate(-50%, -50%) rotate(-30deg) scale(1.4); } }
+@keyframes stripF { 0% { opacity: 0; transform: translate(-50%, -14px); } 20% { opacity: 1; transform: translate(-50%, 0); } 100% { opacity: 1; transform: translate(-50%, 0); } }
+@keyframes stageShake { 0%, 100% { transform: translate(-50%, -50%) scale(var(--s, 1)); } 20% { transform: translate(calc(-50% - 10px), calc(-50% + 6px)) scale(var(--s, 1)); } 40% { transform: translate(calc(-50% + 9px), calc(-50% - 5px)) scale(var(--s, 1)); } 60% { transform: translate(calc(-50% - 6px), calc(-50% + 4px)) scale(var(--s, 1)); } 80% { transform: translate(calc(-50% + 4px), calc(-50% - 3px)) scale(var(--s, 1)); } }
 </style>
 </head>
 <body>
@@ -546,7 +618,7 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; font-f
     } else if (m.t === 'state') {
       if (!S) busy(null);
       var fresh = freshFx(m.s);
-      S = m.s; clockAt = Date.now(); window.__S = S;
+      S = m.s; clockAt = Date.now(); window.__S = S; window.__render = function () { render([]); };
       render(fresh);
     }
   }
@@ -585,7 +657,7 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; font-f
     stage.appendChild(d);
     setTimeout(function () { d.remove(); }, 1400);
   }
-  function plateOf(id) { return document.querySelector('#party [data-pid="' + id + '"]'); }
+  function plateOf(id) { return document.querySelector('#field .spr[data-pid="' + id + '"] .hex') || document.querySelector('#party [data-pid="' + id + '"]'); }
   var LET = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
   var KIND = { fight: { e: '⚔️', t: 'A FIGHT' }, shop: { e: '🛒', t: 'THE SHOP' }, camp: { e: '🔥', t: 'A REST' }, treasure: { e: '💰', t: 'TREASURE' } };
 
@@ -769,8 +841,50 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; font-f
         h = endHtml(s);
         break;
     }
+    stage.classList.toggle('fight', inFight(ph) && !!g.fight);
     F.morph(main, h);
-    if (ph === 'question' && g.q) { var qt = main.querySelector('.qtext'); if (qt) F.fit(qt, 22); }
+    if ((ph === 'question' || ph === 'result' || ph === 'strike') && g.q) { var qt = main.querySelector('.qtext'); if (qt) F.fit(qt, 22); }
+    if (ph === 'between') { var st0 = $('#strip'); if (!st0 || st0.textContent !== 'NEXT QUESTION') fxStrip('NEXT QUESTION', '#d4a84b'); }
+    if (ph !== 'result' && ph !== 'strike' && ph !== 'between') { fxClear(); if (ph === 'question') { FX.panel.dim = false; fxStrip(null); } }
+    applyFx();
+  }
+
+  var FIGHT_PHASES = ['enter', 'between', 'question', 'result', 'strike', 'revive', 'victory', 'wipe'];
+  function inFight(ph) { return FIGHT_PHASES.indexOf(ph) >= 0; }
+
+  // Where each hero stands on the field (#main coordinates). Four or fewer: the staggered diagonal
+  // from the design. Five to eight: two ranks, slightly smaller.
+  function heroSpots(n) {
+    var base = [[170, 456], [380, 536], [590, 616], [800, 696]];
+    if (n <= 4) return base.slice(0, n).map(function (p) { return { x: p[0], y: p[1], k: 1 }; });
+    var back = Math.ceil(n / 2), front = n - back, out = [], i;
+    for (i = 0; i < back; i++) out.push({ x: 110 + i * 210, y: 462 + i * 14, k: .85 });
+    for (i = 0; i < front; i++) out.push({ x: 215 + i * 210, y: 670 + i * 14, k: .85 });
+    return out;
+  }
+  function fieldOrder(g) { return g.order.filter(function (id) { return g.players[id] && !g.players[id].left; }); }
+  function spotOf(id) { var g = S.game, ids = fieldOrder(g), k = ids.indexOf(id); return heroSpots(ids.length)[k] || { x: 0, y: 0, k: 1 }; }
+
+  function fieldHtml(s) {
+    var g = s.game, q = g.q, r = g.result, ids = fieldOrder(g), spots = heroSpots(ids.length);
+    var h = '<div id="ground"></div><div id="field" data-key="field">';
+    ids.forEach(function (id, k) {
+      var p = g.players[id], pl = player(id), hero = H.heroById(p.hero), sp = spots[k];
+      var mark = '';
+      if (s.phase === 'question' && q && !p.down) {
+        if (q.t === 'hidden') { if (q.claims && q.claims.some(function (c) { return c.pid === id; })) mark = '<span class="mark no">✗</span>'; }
+        else if (q.t === 'list') { var n = (q.found || []).filter(function (f) { return f.by === id; }).length; if (n) mark = '<span class="mark ok">' + n + '</span>'; }
+        else if (q.t === 'tot') { if ((q.tapped || []).indexOf(id) >= 0) mark = '<span class="mark lock">✓</span>'; }
+        else if ((q.answered || []).indexOf(id) >= 0) mark = '<span class="mark lock">✓</span>';
+      }
+      if ((s.phase === 'result' || s.phase === 'strike') && r && r.by[id] && !r.by[id].out) mark = '<span class="mark ' + (r.by[id].ok ? 'ok">✓' : 'no">✗') + '</span>';
+      var tag = s.phase === 'question' && q && q.t === 'hidden' && q.reader === id ? '<span class="tag st">📣 READER</span>' : id === s.captain ? '<span class="tag cap">CAPTAIN</span>' : '';
+      h += '<div class="spr' + (p.down ? ' down' : '') + (pl && !pl.on && !pl.bot ? ' off' : '') + '" data-key="sp' + id + '" data-pid="' + id + '" style="left:' + sp.x + 'px;top:' + sp.y + 'px;z-index:' + (k + 1) + '"><div class="scale" style="transform:scale(' + sp.k + ')">' +
+        '<div class="tags">' + mark + tag + '</div>' +
+        '<div class="hex" style="--c1:' + hero.c1 + ';--c2:' + hero.c2 + '"><div class="in">' + F.emo(hero.pic) + '</div></div>' +
+        '<div class="tab"><b>' + esc(nameOf(id)) + '</b>' + F.bar(p.hp, p.maxHp) + '<div class="row"><span>◉ ' + F.num(p.coins) + '</span><span class="bag">' + (p.items ? '🎒 ' + p.items : '') + '</span></div></div></div></div>';
+    });
+    return h + '</div>';
   }
 
   function fightHtml(s, has) {
@@ -778,42 +892,34 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; font-f
     if (!f) return '';
     var every = (f.strike && f.strike.every) || 3, inN = every - (f.qCount % every);
     var dots = ''; for (var i = 0; i < every; i++) dots += '<i class="' + (i < (f.qCount % every) ? 'on' : '') + '"></i>';
-    var mon = '<div id="monster" class="' + (f.boss ? 'boss' : '') + (f.hp <= 0 ? ' dead' : '') + '" data-key="monster">' +
+    var deadNow = f.hp <= 0 && ph !== 'result';
+    var mon = '<div id="monster" class="' + (f.boss ? 'boss' : '') + (deadNow ? ' dead' : '') + '" data-key="monster">' +
       '<div class="next">' + (f.hp > 0 ? '<span>' + (f.strike.kind === 'rob' ? 'ROBS' : 'STRIKES') + ' IN ' + inN + '</span><span>' + dots + '</span>' : '') + '</div>' +
       '<div class="aura"></div><div class="frame"><div class="in"><div class="body">' + F.emo(f.emoji) + '</div></div></div>' +
       (f.boss ? '<div class="crown">' + (f.final ? '👑' : '💀') + '</div><div class="sub">' + (f.final ? 'THE FINAL BOSS' : 'BOSS OF ' + esc(g.worldInfo.name.toUpperCase())) + '</div>' : '') +
       (f.decoy ? '<div class="decoy">🎃</div>' : '') +
       '<div class="name">' + esc(f.name) + '</div>' + F.bar(f.hp, f.maxHp, 'monster') + '</div>';
     var left = '';
-    if (ph === 'enter' || ph === 'between') {
+    if (ph === 'enter') {
       left = '<div class="enterCard panel inlay" data-key="enter"><div class="kicker">' + (f.retry ? 'ROUND ' + (f.retry + 1) : f.boss ? 'THE BOSS' : 'A MONSTER') + '</div><h2>' + esc(f.name) + '</h2><p class="story">' + esc(f.qCount ? f.taunt : f.intro) + '</p><div class="asks">' + uniq(g.fight.types || []).map(function (t) { return H.TYPES[t] ? F.typeBadge(t) : ''; }).join('') + '</div></div>';
-    } else if (ph === 'question' || ph === 'result') {
+    } else if (ph === 'question' || ph === 'result' || (ph === 'strike' && q)) {
       left = questionHtml(s);
     } else if (ph === 'strike') {
-      var st = g.strike;
-      var list = Object.keys(st.by || {}).map(function (id) { var x = st.by[id]; return '<span>' + med(id) + esc(nameOf(id)) + ' ' + (x.shielded ? '🛡️ SHIELDED' : x.coins != null ? '−' + x.coins + ' 🪙' : x.hp ? '−' + x.hp + (x.wall ? ' (SHIELD WALL)' : '') : 'DODGED') + '</span>'; }).join('');
-      left = '<div class="strikeCard panel inlay" data-key="strike"><div class="kicker">' + esc(f.name.toUpperCase()) + '</div><h2>' + (st.decoy ? 'STRAW!' : st.kind === 'rob' ? 'ROBBED!' : st.kind === 'drain' ? 'DRAINED!' : 'STRIKE!') + '</h2><p class="story">' + esc((g.log.slice(-1)[0] || {}).text || '') + '</p><div class="list">' + list + '</div></div>';
+      left = '';
     } else if (ph === 'revive') {
       left = '<div class="strikeCard panel inlay" data-key="revive"><div class="kicker">EVERYONE IS DOWN</div><h2>ROLL FOR YOUR LIVES</h2><p class="story">Anyone with ' + g.reviveCost + ' gold can roll the d20 on their phone. The higher the roll, the more health you come back with. If nobody gets up before the clock runs out, ' + esc(f.name) + ' wins.</p></div>';
     } else if (ph === 'victory') {
       var loot = g.loot || { coins: 0, items: {} };
-      left = '<div class="strikeCard panel inlay" data-key="victory"><div class="kicker">' + esc(f.name.toUpperCase()) + ' DEFEATED</div><h2 class="gold">' + (f.final ? 'LEGENDARY!' : f.boss ? 'BOSS DOWN!' : 'VICTORY!') + '</h2><p class="story">' + esc(f.dead) + '</p><div class="list"><span>+' + loot.coins + ' 🪙 each</span>' + Object.keys(loot.items).map(function (id) { var it = H.item(loot.items[id]); return '<span>' + med(id) + esc(nameOf(id)) + ' found ' + F.emo(it.emoji) + ' ' + esc(it.name) + '</span>'; }).join('') + '</div></div>';
+      left = '<div class="strikeCard panel inlay" data-key="victory"><div class="kicker">' + esc(f.name.toUpperCase()) + ' DEFEATED</div><h2 class="gold">' + (f.final ? 'LEGENDARY!' : f.boss ? 'BOSS DOWN!' : 'VICTORY!') + '</h2><p class="story">' + esc(f.dead) + '</p><div class="list"><span>+' + loot.coins + ' ◉ each</span>' + Object.keys(loot.items).map(function (id) { var it = H.item(loot.items[id]); return '<span>' + med(id) + esc(nameOf(id)) + ' found ' + F.emo(it.emoji) + ' ' + esc(it.name) + '</span>'; }).join('') + '</div></div>';
     } else if (ph === 'wipe') {
       left = '<div class="strikeCard panel inlay" data-key="wipe" id="wipeCard"><div class="kicker">' + esc(f.name.toUpperCase()) + '</div><h2>THE PARTY FALLS</h2><p class="story">“' + esc(f.taunt) + '” Nobody can get up. Rise again at half health and fight ' + esc(f.name) + ' from the top, or end the run here.</p><div class="btns"><button class="btn accent" data-a="retry">Rise again</button><button class="btn ghost" data-a="giveUp">End the run</button></div></div>';
     }
-    var strip = '';
-    if (ph === 'result' && g.result) {
-      var r = g.result;
-      if (f.hp <= 0) strip = '<div class="resultStrip" data-key="strip">' + f.name.toUpperCase() + ' GOES DOWN!</div>';
-      else if (r.hits) strip = '<div class="resultStrip" data-key="strip">THE PARTY HITS FOR ' + F.num(r.hits) + '</div>';
-      else strip = '<div class="resultStrip hurt" data-key="strip">' + (r.incomplete ? 'THE LIST WASN’T FINISHED' : 'NOBODY HAD IT') + '</div>';
-    }
-    return '<div data-key="fight">' + left + strip + mon + '</div>';
+    return '<div data-key="fight">' + fieldHtml(s) + left + mon + '</div>';
   }
   function uniq(a) { return a.filter(function (x, i) { return a.indexOf(x) === i; }); }
 
   function questionHtml(s) {
-    var g = s.game, q = g.q, done = s.phase === 'result', r = g.result || { by: {} };
+    var g = s.game, q = g.q, done = s.phase === 'result' || s.phase === 'strike', r = g.result || { by: {} };
     var head = '<div class="qhead">' + F.typeBadge(q.t, q.finisher) + '<span class="pack">' + esc((H.PACKS.filter(function (p) { return p.id === q.pack; })[0] || {}).name || '').toUpperCase() + '</span>' + (!done && q.answered ? '<span class="lock">' + q.answered.map(function (id) { return med(id); }).join('') + '<span>' + q.answered.length + ' OF ' + standingCount() + ' LOCKED IN</span></span>' : '') + '</div>';
     var body = '';
     var picks = q.picks || {};
@@ -888,6 +994,135 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; font-f
     if (S && S.phase === 'intro' && conn) conn.send({ t: 'h', a: 'skipIntro' });
   });
 
+
+  /* ------------------------------------------------------------ the round, played out */
+  // What the TV is showing on top of the server's state while a round plays: hero charges, the
+  // monster's recoil and lunge, health bars catching up. Re-applied after every redraw.
+  var FX = { hero: {}, mon: {}, panel: { dim: false }, timers: [] };
+  function fxClear() { FX.timers.forEach(clearTimeout); FX.timers = []; FX.hero = {}; FX.mon = {}; }
+  function fxAt(ms, fn) { FX.timers.push(setTimeout(fn, ms)); }
+  function applyFx() {
+    var g = S && S.game;
+    if (!g) return;
+    document.querySelectorAll('#field .spr').forEach(function (el) {
+      var id = el.getAttribute('data-pid'), f = FX.hero[id] || {}, p = g.players[id];
+      el.style.transform = f.transform || ''; el.style.filter = f.filter || '';
+      if (f.z) el.style.zIndex = f.z;
+      var sc = el.querySelector('.scale');
+      if (sc && sc.style.animation !== (f.anim || '')) sc.style.animation = f.anim || '';
+      if (p && f.hp != null) { var bar = el.querySelector('.bar i'), lab = el.querySelector('.bar b'); if (bar) bar.style.width = (100 * Math.max(0, Math.min(1, f.hp / p.maxHp))).toFixed(1) + '%'; if (lab) lab.textContent = F.num(f.hp); el.querySelector('.bar').classList.toggle('low', f.hp <= p.maxHp * .25); }
+    });
+    var m = $('#monster');
+    if (m) {
+      m.style.transform = FX.mon.transform || '';
+      var fr = m.querySelector('.frame .in'); if (fr && fr.style.animation !== (FX.mon.anim || '')) fr.style.animation = FX.mon.anim || '';
+      var body = m.querySelector('.body'); if (body) body.style.filter = FX.mon.filter || '';
+      if (FX.mon.hp != null && g.fight) { var bar = m.querySelector('.bar i'), lab = m.querySelector('.bar b'); if (bar) bar.style.width = (100 * Math.max(0, FX.mon.hp / g.fight.maxHp)).toFixed(1) + '%'; if (lab) lab.textContent = F.num(FX.mon.hp); }
+      if (FX.mon.dead) m.classList.add('dead');
+    }
+    var qp = $('#qpanel');
+    if (qp) { qp.style.opacity = FX.panel.dim ? '.14' : ''; qp.style.transform = FX.panel.dim ? 'scale(.97) translateY(-12px)' : ''; }
+  }
+  function fxStrip(text, color) {
+    var old = $('#strip'); if (old) old.remove();
+    if (!text) return;
+    var d = document.createElement('div');
+    d.id = 'strip'; d.textContent = text; d.style.setProperty('--sc', color || '#e6c774');
+    d.style.top = (196 + 104) + 'px';
+    stage.appendChild(d);
+  }
+  // A number that pops up and drifts away, in stage coordinates.
+  function fxPop(x, y, text, color, size) {
+    var d = document.createElement('div');
+    d.className = 'pop'; d.textContent = text; d.style.left = x + 'px'; d.style.top = y + 'px'; d.style.color = color; d.style.fontSize = (size || 64) + 'px';
+    stage.appendChild(d);
+    setTimeout(function () { d.remove(); }, 1150);
+  }
+  function popOnHero(id, text, color, size) { var sp = spotOf(id); fxPop(sp.x + 100 * sp.k, sp.y + 104 + 60, text, color, size); }
+  function fxSlash() {
+    var d = document.createElement('div');
+    d.className = 'slash'; d.style.left = '1560px'; d.style.top = '529px';
+    stage.appendChild(d);
+    setTimeout(function () { d.remove(); }, 500);
+  }
+  function redFlash() { var f = $('#flash'); f.classList.remove('on'); f.classList.add('red'); void f.offsetWidth; f.classList.add('on'); setTimeout(function () { f.classList.remove('red'); }, 600); }
+
+  // The party's turn: reveal, call the hit, every hero who hit charges in, the monster reels.
+  function roundTimeline() {
+    fxClear();
+    var g = S.game, r = g.result, f = g.fight;
+    if (!r || !f || !inFight(S.phase)) return;
+    var order = fieldOrder(g);
+    var hitters = order.filter(function (id) { return r.by[id] && r.by[id].dmg > 0; });
+    var losers = order.filter(function (id) { return r.by[id] && !r.by[id].out && r.by[id].lost; });
+    var total = r.hits || 0;
+    FX.mon.hp = Math.min(f.maxHp, f.hp + total);
+    losers.forEach(function (id) { FX.hero[id] = { hp: Math.min(g.players[id].maxHp, g.players[id].hp + r.by[id].lost) }; });
+    applyFx();
+    var t = 900;
+    fxAt(t, function () {
+      FX.panel.dim = true;
+      fxStrip(total ? 'THE PARTY HITS FOR ' + F.num(total) : (r.incomplete ? 'THE LIST WASN’T FINISHED' : 'NOBODY HAD IT'), total ? '#e6c774' : '#ff5a2a');
+      order.forEach(function (id) { var x = r.by[id]; if (!x || x.out || x.ok) return; FX.hero[id] = Object.assign(FX.hero[id] || {}, { filter: 'saturate(.6) brightness(.8)' }); });
+      losers.forEach(function (id, k) {
+        var x = r.by[id];
+        setTimeout(function () { FX.hero[id] = Object.assign(FX.hero[id] || {}, { hp: g.players[id].hp, anim: 'hurtF .5s ease-out both' }); popOnHero(id, '−' + x.lost + (g.players[id].down ? ' · DOWN' : ''), g.players[id].down ? '#ff5a2a' : '#ff8a7a', g.players[id].down ? 44 : 56); sfx.hurt(); applyFx(); }, k * 90);
+      });
+      if (!total) sfx.wrong();
+      applyFx();
+    });
+    t += 700;
+    hitters.forEach(function (id) {
+      var x = r.by[id], sp = spotOf(id);
+      var dx = 1250 - (sp.x + 100 * sp.k), dy = 396 - (sp.y + 70 * sp.k);
+      fxAt(t, function () { FX.hero[id] = Object.assign(FX.hero[id] || {}, { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(1.12)', z: 8, anim: '' }); applyFx(); });
+      fxAt(t + 330, function () {
+        FX.mon.hp = Math.max(0, FX.mon.hp - x.dmg); FX.mon.anim = 'recoilF .5s ease-out both'; FX.mon.filter = 'brightness(2.2) sepia(.4)';
+        fxSlash(); shakeStage(); fxPop(1540, 380, '−' + F.num(x.dmg), '#ffe9a8', 84); sfx.hit(false);
+        if (x.gold) setTimeout(function () { popOnHero(id, '+' + x.gold + ' ◉', '#e6c774', 36); sfx.coin(); }, 200);
+        applyFx();
+      });
+      fxAt(t + 480, function () { FX.mon.filter = ''; applyFx(); });
+      fxAt(t + 700, function () { FX.hero[id].transform = ''; FX.hero[id].z = ''; applyFx(); });
+      fxAt(t + 1000, function () { FX.mon.anim = ''; applyFx(); });
+      t += 950;
+    });
+    if (f.hp <= 0) {
+      fxAt(t + 150, function () { FX.mon.hp = 0; FX.mon.dead = true; fxStrip(f.name.toUpperCase() + ' GOES DOWN!', '#e6c774'); flash(); shakeStage(); sfx.victory(f.boss); applyFx(); });
+    }
+  }
+  // The monster's turn: the strip calls it, the monster lunges, everyone takes the hit.
+  function strikeTimeline() {
+    fxClear();
+    var g = S.game, st = g.strike, f = g.fight;
+    if (!st || !f) return;
+    var order = fieldOrder(g);
+    FX.panel.dim = true;
+    Object.keys(st.by || {}).forEach(function (id) { var x = st.by[id], p = g.players[id]; if (p && x.hp) FX.hero[id] = { hp: Math.min(p.maxHp, p.hp + x.hp) }; });
+    if (st.heal) FX.mon.hp = Math.max(0, f.hp - st.heal);
+    applyFx();
+    fxStrip(st.decoy ? f.name.toUpperCase() + ' HITS THE SCARECROW' : f.name.toUpperCase() + (st.kind === 'rob' ? ' ROBS THE PARTY' : ' STRIKES BACK'), '#ff5a2a');
+    fxAt(650, function () { FX.mon.transform = st.decoy ? 'translate(-240px,60px) scale(1.08)' : 'translate(-640px,120px) scale(1.15)'; applyFx(); });
+    fxAt(1010, function () {
+      shakeStage(); sfx.strike();
+      if (st.decoy) { fxPop(1100, 660, 'STRAW!', '#e6c774', 60); applyFx(); return; }
+      redFlash();
+      order.forEach(function (id) {
+        var x = st.by[id], p = g.players[id];
+        if (!x) return;
+        if (x.shielded) { FX.hero[id] = Object.assign(FX.hero[id] || {}, { anim: 'hurtF .5s ease-out both' }); popOnHero(id, '🛡️ SHIELD WALL', '#5fd47a', 32); return; }
+        if (x.coins != null) { FX.hero[id] = Object.assign(FX.hero[id] || {}, { anim: 'hurtF .5s ease-out both' }); popOnHero(id, x.coins ? '−' + x.coins + ' ◉' : 'EMPTY POCKETS', x.coins ? '#ff8a7a' : '#c9c1b2', 44); return; }
+        if (!x.hp) { popOnHero(id, p.buffs && p.buffs.indexOf('shield') >= 0 ? '🛡️ BLOCKED' : 'DODGED', '#5fd47a', 36); return; }
+        FX.hero[id] = Object.assign(FX.hero[id] || {}, { hp: p.hp, anim: 'hurtF .5s ease-out both', filter: p.down ? '' : 'brightness(1.6) sepia(.5) hue-rotate(-30deg)' });
+        popOnHero(id, '−' + x.hp + (p.down ? ' · DOWN' : ''), p.down ? '#ff5a2a' : '#ff8a7a', p.down ? 44 : 60);
+      });
+      if (st.heal) { FX.mon.hp = f.hp; fxPop(1540, 380, '+' + F.num(st.heal), '#5fd47a', 64); }
+      applyFx();
+    });
+    fxAt(1430, function () { order.forEach(function (id) { if (FX.hero[id]) { FX.hero[id].filter = ''; FX.hero[id].anim = ''; } }); applyFx(); });
+    fxAt(1600, function () { FX.mon.transform = ''; applyFx(); });
+  }
+
   /* ------------------------------------------------------------ sounds and effects */
   var monsterHp = null;
   function sounds(s, fresh, has) {
@@ -897,35 +1132,13 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; font-f
         case 'joined': sfx.join(); if (e.late) banner(e.name + ' JUMPS IN', 1800, 'good'); break;
         case 'start': case 'world': sfx.intro(); break;
         case 'path': sfx.path(); break;
-        case 'enter': sfx.enter(e.boss); if (e.boss) { shakeStage(); banner(g.fight && g.fight.final ? 'THE FINAL BOSS' : 'BOSS FIGHT', 2400, 'bad'); } break;
-        case 'question': sfx.ask(); if (e.finisher) banner('FINISHER!', 1600, 'bad', 'RAPID FIRE'); break;
+        case 'enter': fxStrip(null); sfx.enter(e.boss); if (e.boss) { shakeStage(); banner(g.fight && g.fight.final ? 'THE FINAL BOSS' : 'BOSS FIGHT', 2400, 'bad'); } break;
+        case 'question': sfx.ask(); fxStrip(null); if (e.finisher) banner('FINISHER!', 1600, 'bad', 'RAPID FIRE'); break;
         case 'word': sfx.word(); break;
-        case 'found': sfx.found(); floatAt(plateOf(e.pid), '+1', 'gold'); break;
-        case 'wrongClaim': sfx.wrong(); floatAt(plateOf(e.pid), 'NOT IT', 'hurt'); break;
-        case 'result': {
-          var r = g.result;
-          if (!r) break;
-          if (r.hits) { sfx.hit(e.dead); flash(); var m = $('#monster'); if (m) { m.classList.remove('hitfx'); void m.offsetWidth; m.classList.add('hitfx'); } floatAt($('#monster .body'), '−' + F.num(r.hits), 'dmg'); }
-          else if (!e.dead) sfx.wrong();
-          Object.keys(r.by).forEach(function (id, k) {
-            var x = r.by[id], pl = plateOf(id);
-            if (!pl || x.out) return;
-            setTimeout(function () {
-              if (x.dmg) floatAt(pl, '+' + F.num(x.dmg), 'dmg');
-              if (x.gold) { floatAt(pl, '+' + x.gold + ' 🪙', 'gold'); sfx.coin(); }
-              if (x.lost) { floatAt(pl, '−' + x.lost, 'hurt'); sfx.hurt(); }
-            }, 150 + k * 120);
-          });
-          if (e.dead) setTimeout(function () { sfx.victory(g.fight && g.fight.boss); }, 400);
-          break;
-        }
-        case 'strike': {
-          sfx.strike(); shakeStage();
-          var mo = $('#monster'); if (mo) { mo.classList.remove('lunge'); void mo.offsetWidth; mo.classList.add('lunge'); }
-          var st = g.strike;
-          if (st) Object.keys(st.by || {}).forEach(function (id, k) { var x = st.by[id]; setTimeout(function () { if (x.hp) floatAt(plateOf(id), '−' + x.hp, 'hurt'); if (x.coins) floatAt(plateOf(id), '−' + x.coins + ' 🪙', 'hurt'); if (x.shielded) floatAt(plateOf(id), 'SHIELD WALL', 'heal'); }, 300 + k * 100); });
-          break;
-        }
+        case 'found': sfx.found(); if (stage.classList.contains('fight')) popOnHero(e.pid, '+1', '#e6c774', 40); else floatAt(plateOf(e.pid), '+1', 'gold'); break;
+        case 'wrongClaim': sfx.wrong(); if (stage.classList.contains('fight')) { popOnHero(e.pid, 'NOT IT', '#ff5a2a', 40); FX.hero[e.pid] = Object.assign(FX.hero[e.pid] || {}, { anim: 'hurtF .5s ease-out both' }); applyFx(); } else floatAt(plateOf(e.pid), 'NOT IT', 'hurt'); break;
+        case 'result': roundTimeline(); break;
+        case 'strike': strikeTimeline(); break;
         case 'down': sfx.down(); banner(nameOf(e.pid) + ' IS DOWN', 1500, 'bad'); break;
         case 'revive': sfx.dice(); setTimeout(function () { sfx.revive(); banner(nameOf(e.pid) + ' ROLLS A ' + e.roll, 1800, e.nat20 ? 'good' : '', e.nat20 ? 'NATURAL 20! FULL HEALTH, AND THE DICE PAY' : 'BACK UP WITH ' + e.hp + ' HEALTH'); floatAt(plateOf(e.pid), '+' + e.hp, 'heal'); }, 700); break;
         case 'autorevive': sfx.revive(); banner(nameOf(e.pid) + ' GETS BACK UP', 1500, 'good'); floatAt(plateOf(e.pid), 'REVIVED', 'heal'); break;
@@ -943,7 +1156,7 @@ html, body { margin: 0; height: 100%; background: #000; overflow: hidden; font-f
         case 'shop': sfx.shop(); break;
         case 'camp': sfx.revive(); break;
         case 'treasure': sfx.coins(); break;
-        case 'victory': if (e.boss) { confettiBurst(); } break;
+        case 'victory': fxStrip(null); if (e.boss) { confettiBurst(); } break;
         case 'worldDone': sfx.victory(true); break;
         case 'allDown': sfx.down(); banner('EVERYONE IS DOWN', 2200, 'bad', 'ROLL FOR YOUR LIVES'); break;
         case 'wipe': sfx.defeat(); break;

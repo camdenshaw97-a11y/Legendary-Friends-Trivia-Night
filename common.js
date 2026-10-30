@@ -8,7 +8,7 @@
   F.TITLE = 'LEGENDARY FRIENDS';
   F.SUB = 'QUEST FOR TRIVIA';
   // Shown small on the start screens. Goes up with every change; CHANGELOG.md says what each one was.
-  F.VERSION = '1.1';
+  F.VERSION = '1.2';
 
   F.$ = function (sel, root) { return (root || document).querySelector(sel); };
   F.esc = function (s) {

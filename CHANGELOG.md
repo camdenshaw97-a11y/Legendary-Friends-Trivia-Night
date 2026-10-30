@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.2 — Oct 29, 2026
+The fight is a battle, not a form — the TV's fight screen rebuilt from Camden's "Stonehall Fight Scene" design.
+
+- The party plates are gone during a fight. Heroes stand on a battlefield as sprites (hex portrait, stone name tab with a health bar, gold and bag) along a staggered diagonal in front of the monster; five to eight heroes form two ranks. A ground line and floor gradient give them somewhere to stand. CAPTAIN / READER tabs and the lock marks sit above each sprite.
+- The question panel is a smaller slab at the top-left; the monster stands tall at the right with its strike counter, name and health bar.
+- Every round plays out: the reveal, then a battle strip ("THE PARTY HITS FOR 780", or "NOBODY HAD IT"), then each hero who hit charges across the field in turn — slash, recoil, stage shake, a damage number, the monster's bar dropping — while heroes who missed flinch and lose health on the spot. If the blow was fatal, the monster goes grey and the strip calls it.
+- The monster's turn is its own beat: "THE RATTLING BONES STRIKES BACK" (or ROBS THE PARTY), a lunge across the field, a red flash, every hero flinching with their loss, SHIELD WALL / BLOCKED / DODGED where it applies, "STRAW!" when it hits the scarecrow. "NEXT QUESTION" bridges into the next round.
+- Down heroes grey out and tilt; offline players fade.
+- The server gives the result phase enough time for every charge to land before the monster's turn.
+- World scenery is hidden during fights so the moon doesn't sit behind the monster.
+- Tests: the "DEE goes down" check now forces a multiple-choice question first.
+
 ## 1.1 — Oct 29, 2026
 The "Stonehall" restyle, from Camden's design handoff (Claude Design).
 

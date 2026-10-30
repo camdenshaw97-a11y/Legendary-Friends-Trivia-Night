@@ -213,7 +213,7 @@ async function main() {
   await phase(tv, 'fork');
   ph[0].send({ t: 'use', item: 'heal' });
   await ph[0].until(s => s.me.hp === 500);
-  check('the witch’s Healing Potion heals double (200 → full 500)', ph[0].state.me.hp === 500 && !ph[0].state.me.items.includes('heal'));
+  check('the witch’s Healing Potion heals double (200 → full 500)', ph[0].state.me.hp === 500 && !ph[0].state.me.items.includes('heal'), 'hp ' + ph[0].state.me.hp + ' phase ' + tv.state.phase);
   ph[0].send({ t: 'gift', item: 'mystery', to: ids[2] });
   await ph[2].until(s => s.me.items.includes('mystery'));
   await ph[0].until(s => !s.me.items.includes('mystery'));
@@ -259,9 +259,12 @@ async function main() {
 
   // Now a revive: knock DEE down, let her roll.
   const gg = G(tv);
-  gg.players[ids[3]].hp = 1; gg.players[ids[3]].coins = 600;
   gg.fight.hp = 9999; gg.fight.maxHp = 9999;
-  await tv.until(s => s.phase === 'question', 12000);
+  // A plain multiple choice, so a wrong answer from DEE is sure to land.
+  gg.fight.types = ['mc'];
+  // Set her up once the next question is on screen, so a strike in between can't knock her down first.
+  await tv.until(s => s.phase === 'question' && G(tv).q && G(tv).q.t === 'mc' && !G(tv).q.done, 12000);
+  gg.players[ids[3]].hp = 1; gg.players[ids[3]].coins = 600; gg.players[ids[3]].down = false;
   for (const p of ph) if (!p.state.me.down) answerAs(tv, p, p.name !== 'DEE');
   await tv.until(s => s.phase === 'result', 4000);
   check('DEE goes down from a wrong answer at 1 health', G(tv).players[ids[3]].down === true);
